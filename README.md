@@ -26,6 +26,7 @@ python -m pytest
 - Average max temperature: **21.4 °C**
 - Warmest day: **22.1 °C** · Coldest max: **20.6 °C**
 - Total rain: **1.9 mm** · Dry days: **2**
+- Rain vs. sunshine correlation: **r = -0.81**
 
 Last 7 days (Breda):
 
@@ -42,5 +43,7 @@ Latest EUR rates (2026-09-28): USD 1.1378 · GBP 0.85785 · CHF 0.9464 · TRY 55
 ## Roadmap
 
 - [ ] Monthly summary notebook (pandas)
-- [ ] Rain vs. sunshine correlation
+- [x] Rain vs. sunshine correlation
 - [ ] Weekday vs. weekend exchange-rate gaps
+- [ ] Day-over-day % change for each EUR rate
+- [ ] Rolling 7-day average temperature in the chart

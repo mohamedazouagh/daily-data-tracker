@@ -1,11 +1,30 @@
 """Build the README stats block and a tiny SVG sparkline from the stored CSVs."""
 from __future__ import annotations
 
-from statistics import mean
+from statistics import correlation, mean
 
 
 def _floats(rows: list[dict], key: str) -> list[float]:
     return [float(r[key]) for r in rows if r.get(key) not in ("", None)]
+
+
+def rain_sun_correlation(rows: list[dict]) -> float | None:
+    """Pearson r between daily rain and sunshine hours.
+
+    Only days with both values are used. Returns None with fewer than 3 such
+    days or when either series is constant (r is undefined then).
+    """
+    pairs = [
+        (float(r["precip_mm"]), float(r["sunshine_h"]))
+        for r in rows
+        if r.get("precip_mm") not in ("", None) and r.get("sunshine_h") not in ("", None)
+    ]
+    if len(pairs) < 3:
+        return None
+    rain, sun = zip(*pairs)
+    if len(set(rain)) < 2 or len(set(sun)) < 2:
+        return None
+    return correlation(rain, sun)
 
 
 def sparkline_svg(values: list[float], width: int = 600, height: int = 120) -> str:
@@ -38,6 +57,14 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             f"- Average max temperature: **{mean(tmax):.1f} °C**",
             f"- Warmest day: **{max(tmax):.1f} °C** · Coldest max: **{min(tmax):.1f} °C**",
             f"- Total rain: **{sum(rain):.1f} mm** · Dry days: **{sum(1 for r in rain if r == 0)}**",
+        ]
+        r = rain_sun_correlation(weather)
+        lines.append(
+            f"- Rain vs. sunshine correlation: **r = {r:+.2f}**"
+            if r is not None
+            else "- Rain vs. sunshine correlation: not enough varied days yet"
+        )
+        lines += [
             "",
             "Last 7 days (Breda):",
             "",
