@@ -1,0 +1,41 @@
+name: daily-data
+
+on:
+  schedule:
+    - cron: "17 6 * * *"   # every day at 06:17 UTC
+  workflow_dispatch:        # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run tests
+        run: |
+          pip install pytest
+          python -m pytest -q
+
+      - name: Fetch yesterday's data and rebuild report
+        run: |
+          python -m tracker.run fetch
+          python -m tracker.run report
+
+      - name: Commit if anything changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data README.md
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Add data for $(date -u -d yesterday +%F)"
+            git push
+          fi
