@@ -21,22 +21,23 @@ python -m pytest
 ## Stats
 
 <!-- stats:start -->
-**Days tracked:** 3 weather · 2 FX
+**Days tracked:** 4 weather · 3 FX
 
-- Average max temperature: **21.4 °C**
-- Warmest day: **22.1 °C** · Coldest max: **20.6 °C**
-- Total rain: **1.9 mm** · Dry days: **2**
-- Rain vs. sunshine correlation: **r = -0.81**
+- Average max temperature: **22.6 °C**
+- Warmest day: **26.2 °C** · Coldest max: **20.6 °C**
+- Total rain: **2.0 mm** · Dry days: **2**
+- Rain vs. sunshine correlation: **r = -0.82**
 
 Last 7 days (Breda):
 
 | Date | Max °C | Min °C | Rain mm | Sun h |
 |---|---|---|---|---|
+| 2026-09-29 | 26.2 | 15.5 | 0.1 | 10.65 |
 | 2026-09-28 | 21.4 | 15.1 | 1.9 | 5.42 |
 | 2026-09-27 | 22.1 | 10.6 | 0.0 | 11.0 |
 | 2026-09-26 | 20.6 | 12.7 | 0.0 | 7.72 |
 
-Latest EUR rates (2026-09-28): USD 1.1378 · GBP 0.85785 · CHF 0.9464 · TRY 55.7318
+Latest EUR rates (2026-09-29): USD 1.1355 · GBP 0.85718 · CHF 0.9461 · TRY 55.6398
 
 <!-- stats:end -->
 
