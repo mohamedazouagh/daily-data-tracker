@@ -27,6 +27,27 @@ def rain_sun_correlation(rows: list[dict]) -> float | None:
     return correlation(rain, sun)
 
 
+FX_CODES = ("usd", "gbp", "chf", "try")
+
+
+def fx_pct_changes(fx: list[dict]) -> dict[str, float]:
+    """Percent change of each EUR rate between the last two stored business days.
+
+    Currencies missing (or zero) on either day are left out. Returns {} with
+    fewer than two rows.
+    """
+    if len(fx) < 2:
+        return {}
+    prev, last = fx[-2], fx[-1]
+    out = {}
+    for code in FX_CODES:
+        a, b = prev.get(code), last.get(code)
+        if a in ("", None) or b in ("", None) or float(a) == 0:
+            continue
+        out[code] = (float(b) - float(a)) / float(a) * 100
+    return out
+
+
 def sparkline_svg(values: list[float], width: int = 600, height: int = 120) -> str:
     if len(values) < 2:
         values = values * 2 if values else [0.0, 0.0]
@@ -82,6 +103,10 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             f"Latest EUR rates ({last['date']}): USD {last['usd']} · GBP {last['gbp']} · CHF {last['chf']} · TRY {last['try']}",
             "",
         ]
+        changes = fx_pct_changes(fx)
+        if changes:
+            parts = " · ".join(f"{code.upper()} {pct:+.2f}%" for code, pct in changes.items())
+            lines += [f"Change vs. {fx[-2]['date']}: {parts}", ""]
     return "\n".join(lines)
 
 

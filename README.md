@@ -39,6 +39,8 @@ Last 7 days (Breda):
 
 Latest EUR rates (2026-09-29): USD 1.1355 · GBP 0.85718 · CHF 0.9461 · TRY 55.6398
 
+Change vs. 2026-09-28: USD -0.20% · GBP -0.08% · CHF -0.03% · TRY -0.17%
+
 <!-- stats:end -->
 
 ## Roadmap
@@ -46,5 +48,6 @@ Latest EUR rates (2026-09-29): USD 1.1355 · GBP 0.85718 · CHF 0.9461 · TRY 55
 - [ ] Monthly summary notebook (pandas)
 - [x] Rain vs. sunshine correlation
 - [ ] Weekday vs. weekend exchange-rate gaps
-- [ ] Day-over-day % change for each EUR rate
+- [x] Day-over-day % change for each EUR rate
 - [ ] Rolling 7-day average temperature in the chart
+- [ ] Biggest single-day FX move since tracking started

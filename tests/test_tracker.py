@@ -77,3 +77,28 @@ def test_stats_mentions_correlation():
         {"date": "2026-09-27", "temp_max_c": "18", "temp_min_c": "9", "precip_mm": "3", "sunshine_h": "2"},
     ]
     assert "Rain vs. sunshine correlation" in report.stats_markdown(rows, [])
+
+
+def _fx(date, usd, gbp="0.86", chf="0.94", try_="55.0"):
+    return {"date": date, "usd": usd, "gbp": gbp, "chf": chf, "try": try_}
+
+
+def test_fx_pct_changes_between_last_two_days():
+    rows = [_fx("2026-09-24", "1.00"), _fx("2026-09-25", "1.10"), _fx("2026-09-28", "1.21")]
+    changes = report.fx_pct_changes(rows)
+    assert round(changes["usd"], 6) == 10.0
+    assert changes["gbp"] == 0.0
+
+
+def test_fx_pct_changes_needs_two_rows():
+    assert report.fx_pct_changes([_fx("2026-09-25", "1.1")]) == {}
+
+
+def test_fx_pct_changes_skips_missing_values():
+    rows = [_fx("2026-09-25", ""), _fx("2026-09-28", "1.1")]
+    assert "usd" not in report.fx_pct_changes(rows)
+
+
+def test_stats_shows_fx_change_line():
+    rows = [_fx("2026-09-25", "1.00"), _fx("2026-09-28", "1.02")]
+    assert "Change vs. 2026-09-25: USD +2.00%" in report.stats_markdown([], rows)
