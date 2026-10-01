@@ -48,6 +48,25 @@ def fx_pct_changes(fx: list[dict]) -> dict[str, float]:
     return out
 
 
+def biggest_fx_move(fx: list[dict]) -> tuple[str, str, float] | None:
+    """Largest absolute day-over-day % move across all tracked currencies.
+
+    Compares each stored business day with the one before it and returns
+    (currency, date of the move, signed % change). Pairs with a missing or
+    zero rate are skipped. Returns None when no pair can be compared.
+    """
+    best: tuple[str, str, float] | None = None
+    for prev, cur in zip(fx, fx[1:]):
+        for code in FX_CODES:
+            a, b = prev.get(code), cur.get(code)
+            if a in ("", None) or b in ("", None) or float(a) == 0:
+                continue
+            pct = (float(b) - float(a)) / float(a) * 100
+            if best is None or abs(pct) > abs(best[2]):
+                best = (code, cur["date"], pct)
+    return best
+
+
 def sparkline_svg(values: list[float], width: int = 600, height: int = 120) -> str:
     if len(values) < 2:
         values = values * 2 if values else [0.0, 0.0]
@@ -107,6 +126,10 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         if changes:
             parts = " · ".join(f"{code.upper()} {pct:+.2f}%" for code, pct in changes.items())
             lines += [f"Change vs. {fx[-2]['date']}: {parts}", ""]
+        move = biggest_fx_move(fx)
+        if move:
+            code, day, pct = move
+            lines += [f"Biggest single-day move since tracking started: {code.upper()} {pct:+.2f}% on {day}", ""]
     return "\n".join(lines)
 
 

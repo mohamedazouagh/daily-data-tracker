@@ -42,6 +42,8 @@ Latest EUR rates (2026-09-30): USD 1.1355 · GBP 0.85463 · CHF 0.9478 · TRY 55
 
 Change vs. 2026-09-29: USD +0.00% · GBP -0.30% · CHF +0.18% · TRY +0.04%
 
+Biggest single-day move since tracking started: GBP -0.30% on 2026-09-28
+
 <!-- stats:end -->
 
 ## Roadmap
@@ -51,4 +53,5 @@ Change vs. 2026-09-29: USD +0.00% · GBP -0.30% · CHF +0.18% · TRY +0.04%
 - [ ] Weekday vs. weekend exchange-rate gaps
 - [x] Day-over-day % change for each EUR rate
 - [ ] Rolling 7-day average temperature in the chart
-- [ ] Biggest single-day FX move since tracking started
+- [x] Biggest single-day FX move since tracking started
+- [ ] Longest dry-day streak in Breda

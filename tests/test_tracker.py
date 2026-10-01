@@ -102,3 +102,34 @@ def test_fx_pct_changes_skips_missing_values():
 def test_stats_shows_fx_change_line():
     rows = [_fx("2026-09-25", "1.00"), _fx("2026-09-28", "1.02")]
     assert "Change vs. 2026-09-25: USD +2.00%" in report.stats_markdown([], rows)
+
+
+def test_biggest_fx_move_picks_largest_absolute_change():
+    fx = [
+        {"date": "2026-09-25", "usd": "1.0", "gbp": "0.8", "chf": "1.0", "try": "50"},
+        {"date": "2026-09-28", "usd": "1.01", "gbp": "0.8", "chf": "1.0", "try": "50"},
+        {"date": "2026-09-29", "usd": "1.01", "gbp": "0.78", "chf": "1.0", "try": "50"},
+    ]
+    code, day, pct = report.biggest_fx_move(fx)
+    assert (code, day) == ("gbp", "2026-09-29")
+    assert round(pct, 2) == -2.5
+
+
+def test_biggest_fx_move_skips_missing_and_needs_two_rows():
+    assert report.biggest_fx_move([]) is None
+    assert report.biggest_fx_move([{"date": "2026-09-25", "usd": "1.0"}]) is None
+    fx = [
+        {"date": "2026-09-25", "usd": "", "gbp": "0", "chf": "1.0", "try": ""},
+        {"date": "2026-09-28", "usd": "2.0", "gbp": "0.9", "chf": "1.1", "try": "51"},
+    ]
+    code, _, pct = report.biggest_fx_move(fx)
+    assert code == "chf" and round(pct, 1) == 10.0
+
+
+def test_stats_markdown_mentions_biggest_move():
+    fx = [
+        {"date": "2026-09-25", "usd": "1.0", "gbp": "0.8", "chf": "1.0", "try": "50"},
+        {"date": "2026-09-28", "usd": "1.02", "gbp": "0.8", "chf": "1.0", "try": "50"},
+    ]
+    md = report.stats_markdown([], fx)
+    assert "Biggest single-day move since tracking started: USD +2.00% on 2026-09-28" in md
