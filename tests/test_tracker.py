@@ -133,3 +133,30 @@ def test_stats_markdown_mentions_biggest_move():
     ]
     md = report.stats_markdown([], fx)
     assert "Biggest single-day move since tracking started: USD +2.00% on 2026-09-28" in md
+
+
+def _rain_rows(*pairs):
+    return [{"date": d, "precip_mm": p} for d, p in pairs]
+
+
+def test_longest_dry_streak_picks_longest_run():
+    rows = _rain_rows(
+        ("2026-09-01", "0.0"), ("2026-09-02", "1.2"),
+        ("2026-09-03", "0.0"), ("2026-09-04", "0.0"), ("2026-09-05", "0.0"),
+        ("2026-09-06", "0.4"),
+    )
+    assert report.longest_dry_streak(rows) == (3, "2026-09-03", "2026-09-05")
+
+
+def test_longest_dry_streak_breaks_on_date_gap_and_missing_value():
+    rows = _rain_rows(
+        ("2026-09-01", "0.0"), ("2026-09-02", "0.0"),
+        ("2026-09-04", "0.0"),  # gap: 09-03 not stored
+        ("2026-09-05", ""), ("2026-09-06", "0.0"),
+    )
+    assert report.longest_dry_streak(rows) == (2, "2026-09-01", "2026-09-02")
+
+
+def test_longest_dry_streak_none_without_dry_days():
+    assert report.longest_dry_streak(_rain_rows(("2026-09-01", "3.0"))) is None
+    assert report.longest_dry_streak([]) is None

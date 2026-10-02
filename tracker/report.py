@@ -1,6 +1,7 @@
 """Build the README stats block and a tiny SVG sparkline from the stored CSVs."""
 from __future__ import annotations
 
+from datetime import date, timedelta
 from statistics import correlation, mean
 
 
@@ -67,6 +68,31 @@ def biggest_fx_move(fx: list[dict]) -> tuple[str, str, float] | None:
     return best
 
 
+def longest_dry_streak(rows: list[dict]) -> tuple[int, str, str] | None:
+    """Longest run of consecutive calendar days with 0 mm of rain.
+
+    Returns (length, first date, last date). Days with missing rain values or
+    gaps in the stored dates break a streak. Earliest streak wins ties.
+    Returns None when no dry day is stored.
+    """
+    best: tuple[int, str, str] | None = None
+    run_len, run_start, prev_day = 0, "", None
+    for r in sorted(rows, key=lambda r: r["date"]):
+        day = date.fromisoformat(r["date"])
+        rain = r.get("precip_mm")
+        dry = rain not in ("", None) and float(rain) == 0
+        if dry and run_len and prev_day == day - timedelta(days=1):
+            run_len += 1
+        elif dry:
+            run_len, run_start = 1, r["date"]
+        else:
+            run_len = 0
+        if dry and (best is None or run_len > best[0]):
+            best = (run_len, run_start, r["date"])
+        prev_day = day
+    return best
+
+
 def sparkline_svg(values: list[float], width: int = 600, height: int = 120) -> str:
     if len(values) < 2:
         values = values * 2 if values else [0.0, 0.0]
@@ -98,6 +124,11 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             f"- Warmest day: **{max(tmax):.1f} °C** · Coldest max: **{min(tmax):.1f} °C**",
             f"- Total rain: **{sum(rain):.1f} mm** · Dry days: **{sum(1 for r in rain if r == 0)}**",
         ]
+        streak = longest_dry_streak(weather)
+        if streak:
+            n, first, last = streak
+            span = first if n == 1 else f"{first} → {last}"
+            lines.append(f"- Longest dry streak: **{n} day{'s' if n != 1 else ''}** ({span})")
         r = rain_sun_correlation(weather)
         lines.append(
             f"- Rain vs. sunshine correlation: **r = {r:+.2f}**"
