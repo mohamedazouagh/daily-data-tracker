@@ -68,29 +68,63 @@ def biggest_fx_move(fx: list[dict]) -> tuple[str, str, float] | None:
     return best
 
 
-def longest_dry_streak(rows: list[dict]) -> tuple[int, str, str] | None:
-    """Longest run of consecutive calendar days with 0 mm of rain.
+def _value(row: dict, key: str) -> float | None:
+    v = row.get(key)
+    return None if v in ("", None) else float(v)
 
-    Returns (length, first date, last date). Days with missing rain values or
-    gaps in the stored dates break a streak. Earliest streak wins ties.
-    Returns None when no dry day is stored.
+
+def _longest_run(rows: list[dict], hit) -> tuple[int, str, str] | None:
+    """Longest run of consecutive calendar days where ``hit(row)`` is true.
+
+    Returns (length, first date, last date). Gaps in the stored dates break a
+    run. Earliest run wins ties. Returns None when no row matches.
     """
     best: tuple[int, str, str] | None = None
     run_len, run_start, prev_day = 0, "", None
     for r in sorted(rows, key=lambda r: r["date"]):
         day = date.fromisoformat(r["date"])
-        rain = r.get("precip_mm")
-        dry = rain not in ("", None) and float(rain) == 0
-        if dry and run_len and prev_day == day - timedelta(days=1):
+        ok = hit(r)
+        if ok and run_len and prev_day == day - timedelta(days=1):
             run_len += 1
-        elif dry:
+        elif ok:
             run_len, run_start = 1, r["date"]
         else:
             run_len = 0
-        if dry and (best is None or run_len > best[0]):
+        if ok and (best is None or run_len > best[0]):
             best = (run_len, run_start, r["date"])
         prev_day = day
     return best
+
+
+def longest_dry_streak(rows: list[dict]) -> tuple[int, str, str] | None:
+    """Longest run of consecutive calendar days with 0 mm of rain.
+
+    Days with missing rain values or gaps in the stored dates break a streak.
+    """
+    return _longest_run(rows, lambda r: _value(r, "precip_mm") == 0)
+
+
+WARM_THRESHOLD_C = 20.0
+
+
+def longest_warm_streak(rows: list[dict], threshold: float = WARM_THRESHOLD_C) -> tuple[int, str, str] | None:
+    """Longest run of consecutive days whose max temperature is above ``threshold``.
+
+    Strictly above: a day at exactly the threshold does not count. Missing
+    values and date gaps break a streak.
+    """
+
+    def warm(r: dict) -> bool:
+        t = _value(r, "temp_max_c")
+        return t is not None and t > threshold
+
+    return _longest_run(rows, warm)
+
+
+def _streak_text(streak: tuple[int, str, str]) -> str:
+    n, first, last = streak
+    span = first if n == 1 else f"{first} → {last}"
+    return f"**{n} day{'s' if n != 1 else ''}** ({span})"
 
 
 def sparkline_svg(values: list[float], width: int = 600, height: int = 120) -> str:
@@ -126,9 +160,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         ]
         streak = longest_dry_streak(weather)
         if streak:
-            n, first, last = streak
-            span = first if n == 1 else f"{first} → {last}"
-            lines.append(f"- Longest dry streak: **{n} day{'s' if n != 1 else ''}** ({span})")
+            lines.append(f"- Longest dry streak: {_streak_text(streak)}")
+        warm = longest_warm_streak(weather)
+        lines.append(
+            f"- Longest warm streak (max > {WARM_THRESHOLD_C:.0f} °C): {_streak_text(warm)}"
+            if warm
+            else f"- Longest warm streak (max > {WARM_THRESHOLD_C:.0f} °C): none yet"
+        )
         r = rain_sun_correlation(weather)
         lines.append(
             f"- Rain vs. sunshine correlation: **r = {r:+.2f}**"

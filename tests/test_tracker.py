@@ -160,3 +160,30 @@ def test_longest_dry_streak_breaks_on_date_gap_and_missing_value():
 def test_longest_dry_streak_none_without_dry_days():
     assert report.longest_dry_streak(_rain_rows(("2026-09-01", "3.0"))) is None
     assert report.longest_dry_streak([]) is None
+
+
+def _temp_rows(*pairs):
+    return [{"date": d, "temp_max_c": t, "precip_mm": "0"} for d, t in pairs]
+
+
+def test_longest_warm_streak_is_strictly_above_threshold():
+    rows = _temp_rows(
+        ("2026-09-01", "21.0"), ("2026-09-02", "20.0"),  # exactly 20 breaks it
+        ("2026-09-03", "22.5"), ("2026-09-04", "24.1"),
+        ("2026-09-05", "19.9"),
+    )
+    assert report.longest_warm_streak(rows) == (2, "2026-09-03", "2026-09-04")
+
+
+def test_longest_warm_streak_custom_threshold_and_gaps():
+    rows = _temp_rows(("2026-09-01", "16"), ("2026-09-02", "17"), ("2026-09-04", "18"), ("2026-09-05", ""))
+    assert report.longest_warm_streak(rows, threshold=15) == (2, "2026-09-01", "2026-09-02")
+    assert report.longest_warm_streak(rows) is None
+
+
+def test_stats_mentions_warm_streak():
+    rows = [
+        {"date": "2026-09-26", "temp_max_c": "22", "temp_min_c": "10", "precip_mm": "0", "sunshine_h": "9"},
+        {"date": "2026-09-27", "temp_max_c": "18", "temp_min_c": "9", "precip_mm": "3", "sunshine_h": "2"},
+    ]
+    assert "- Longest warm streak (max > 20 °C): **1 day** (2026-09-26)" in report.stats_markdown(rows, [])

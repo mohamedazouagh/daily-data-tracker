@@ -27,6 +27,7 @@ python -m pytest
 - Warmest day: **26.2 °C** · Coldest max: **19.5 °C**
 - Total rain: **5.4 mm** · Dry days: **3**
 - Longest dry streak: **2 days** (2026-09-26 → 2026-09-27)
+- Longest warm streak (max > 20 °C): **6 days** (2026-09-26 → 2026-10-01)
 - Rain vs. sunshine correlation: **r = -0.66**
 
 Last 7 days (Breda):
@@ -58,4 +59,5 @@ Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 - [ ] Rolling 7-day average temperature in the chart
 - [x] Biggest single-day FX move since tracking started
 - [x] Longest dry-day streak in Breda
-- [ ] Longest warm streak (max temperature above 20 °C)
+- [x] Longest warm streak (max temperature above 20 °C)
+- [ ] Coldest night (lowest min temperature) and its date
