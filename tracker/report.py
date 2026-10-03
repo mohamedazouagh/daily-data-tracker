@@ -127,21 +127,54 @@ def _streak_text(streak: tuple[int, str, str]) -> str:
     return f"**{n} day{'s' if n != 1 else ''}** ({span})"
 
 
-def sparkline_svg(values: list[float], width: int = 600, height: int = 120) -> str:
+def rolling_mean(values: list[float], window: int = 7) -> list[float | None]:
+    """Trailing mean over ``window`` values, aligned with the input.
+
+    The first ``window - 1`` positions have no full window and are None.
+    """
+    if window < 1:
+        raise ValueError("window must be >= 1")
+    out: list[float | None] = []
+    for i in range(len(values)):
+        out.append(mean(values[i - window + 1 : i + 1]) if i >= window - 1 else None)
+    return out
+
+
+def sparkline_svg(
+    values: list[float], width: int = 600, height: int = 120, overlay: list[float | None] | None = None
+) -> str:
+    """SVG line chart of ``values``; ``overlay`` (same length) is drawn dashed on the same scale."""
     if len(values) < 2:
         values = values * 2 if values else [0.0, 0.0]
-    lo, hi = min(values), max(values)
+        overlay = None
+    if overlay and len(overlay) != len(values):
+        overlay = None
+    # Scale over both series: averages can include days cropped from the chart.
+    scaled = values + [v for v in (overlay or []) if v is not None]
+    lo, hi = min(scaled), max(scaled)
     span = (hi - lo) or 1.0
     step = width / (len(values) - 1)
-    pts = " ".join(
-        f"{i * step:.1f},{height - 10 - (v - lo) / span * (height - 20):.1f}"
-        for i, v in enumerate(values)
-    )
+
+    def point(i: int, v: float) -> str:
+        return f"{i * step:.1f},{height - 10 - (v - lo) / span * (height - 20):.1f}"
+
+    pts = " ".join(point(i, v) for i, v in enumerate(values))
+    avg = ""
+    if overlay:
+        avg_pts = [point(i, v) for i, v in enumerate(overlay) if v is not None]
+        if len(avg_pts) >= 2:
+            avg = (
+                f'<polyline fill="none" stroke="#0969da" stroke-width="2" '
+                f'stroke-dasharray="6 4" points="{" ".join(avg_pts)}"/>'
+                f'<text x="{width - 6}" y="16" text-anchor="end" font-family="sans-serif" '
+                f'font-size="12" fill="#0969da">7-day avg</text>'
+            )
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" '
         f'width="{width}" height="{height}">'
         f'<rect width="100%" height="100%" fill="#ffffff"/>'
         f'<polyline fill="none" stroke="#2da44e" stroke-width="2.5" points="{pts}"/>'
+        f"{avg}"
         f'<text x="6" y="16" font-family="sans-serif" font-size="12" fill="#57606a">max {hi:.1f}</text>'
         f'<text x="6" y="{height - 2}" font-family="sans-serif" font-size="12" fill="#57606a">min {lo:.1f}</text>'
         "</svg>\n"

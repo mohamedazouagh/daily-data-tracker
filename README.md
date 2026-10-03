@@ -16,6 +16,8 @@ python -m pytest
 
 ## Max temperature, last 60 days
 
+Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 days are stored).
+
 ![Max temperature trend](data/temp_max.svg)
 
 ## Stats
@@ -56,7 +58,7 @@ Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 - [x] Rain vs. sunshine correlation
 - [ ] Weekday vs. weekend exchange-rate gaps
 - [x] Day-over-day % change for each EUR rate
-- [ ] Rolling 7-day average temperature in the chart
+- [x] Rolling 7-day average temperature in the chart
 - [x] Biggest single-day FX move since tracking started
 - [x] Longest dry-day streak in Breda
 - [x] Longest warm streak (max temperature above 20 °C)

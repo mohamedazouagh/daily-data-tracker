@@ -187,3 +187,23 @@ def test_stats_mentions_warm_streak():
         {"date": "2026-09-27", "temp_max_c": "18", "temp_min_c": "9", "precip_mm": "3", "sunshine_h": "2"},
     ]
     assert "- Longest warm streak (max > 20 °C): **1 day** (2026-09-26)" in report.stats_markdown(rows, [])
+
+
+def test_rolling_mean_aligns_with_input():
+    assert report.rolling_mean([1, 2, 3, 4], window=3) == [None, None, 2, 3]
+    assert report.rolling_mean([5.0], window=7) == [None]
+
+
+def test_rolling_mean_rejects_bad_window():
+    import pytest
+
+    with pytest.raises(ValueError):
+        report.rolling_mean([1, 2], window=0)
+
+
+def test_sparkline_draws_overlay_only_with_two_points():
+    values = [10.0, 12.0, 14.0, 16.0]
+    with_avg = report.sparkline_svg(values, overlay=report.rolling_mean(values, 3))
+    assert with_avg.count("<polyline") == 2 and "7-day avg" in with_avg
+    too_short = report.sparkline_svg(values, overlay=report.rolling_mean(values, 4))
+    assert too_short.count("<polyline") == 1

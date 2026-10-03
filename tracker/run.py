@@ -28,7 +28,10 @@ def build_report() -> None:
     readme = readme_path.read_text(encoding="utf-8")
     readme_path.write_text(report.replace_block(readme, report.stats_markdown(weather, fx)), encoding="utf-8")
     temps = [float(r["temp_max_c"]) for r in weather if r["temp_max_c"]]
-    (ROOT / "data" / "temp_max.svg").write_text(report.sparkline_svg(temps[-60:]), encoding="utf-8")
+    # Average over the full history, then crop, so the first plotted days still get a value.
+    avg = report.rolling_mean(temps, 7)
+    svg = report.sparkline_svg(temps[-60:], overlay=avg[-60:])
+    (ROOT / "data" / "temp_max.svg").write_text(svg, encoding="utf-8")
     print("report rebuilt")
 
 
