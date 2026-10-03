@@ -21,18 +21,19 @@ python -m pytest
 ## Stats
 
 <!-- stats:start -->
-**Days tracked:** 6 weather · 5 FX
+**Days tracked:** 7 weather · 6 FX
 
-- Average max temperature: **22.7 °C**
-- Warmest day: **26.2 °C** · Coldest max: **20.6 °C**
-- Total rain: **5.4 mm** · Dry days: **2**
+- Average max temperature: **22.2 °C**
+- Warmest day: **26.2 °C** · Coldest max: **19.5 °C**
+- Total rain: **5.4 mm** · Dry days: **3**
 - Longest dry streak: **2 days** (2026-09-26 → 2026-09-27)
-- Rain vs. sunshine correlation: **r = -0.63**
+- Rain vs. sunshine correlation: **r = -0.66**
 
 Last 7 days (Breda):
 
 | Date | Max °C | Min °C | Rain mm | Sun h |
 |---|---|---|---|---|
+| 2026-10-02 | 19.5 | 10.8 | 0.0 | 9.65 |
 | 2026-10-01 | 21.0 | 14.4 | 2.2 | 8.27 |
 | 2026-09-30 | 24.8 | 17.8 | 1.2 | 5.74 |
 | 2026-09-29 | 26.2 | 15.5 | 0.1 | 10.65 |
@@ -40,11 +41,11 @@ Last 7 days (Breda):
 | 2026-09-27 | 22.1 | 10.6 | 0.0 | 11.0 |
 | 2026-09-26 | 20.6 | 12.7 | 0.0 | 7.72 |
 
-Latest EUR rates (2026-10-01): USD 1.1298 · GBP 0.85373 · CHF 0.9437 · TRY 55.3993
+Latest EUR rates (2026-10-02): USD 1.1225 · GBP 0.85033 · CHF 0.9279 · TRY 55.165
 
-Change vs. 2026-09-30: USD -0.50% · GBP -0.11% · CHF -0.43% · TRY -0.47%
+Change vs. 2026-10-01: USD -0.65% · GBP -0.40% · CHF -1.67% · TRY -0.42%
 
-Biggest single-day move since tracking started: USD -0.50% on 2026-10-01
+Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 
 <!-- stats:end -->
 
