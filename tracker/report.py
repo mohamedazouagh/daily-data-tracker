@@ -121,6 +121,20 @@ def longest_warm_streak(rows: list[dict], threshold: float = WARM_THRESHOLD_C) -
     return _longest_run(rows, warm)
 
 
+def coldest_night(rows: list[dict]) -> tuple[str, float] | None:
+    """Day with the lowest minimum temperature as (date, temp_min_c).
+
+    Rows without a min temperature are skipped; the earliest date wins ties.
+    Returns None when no row has a value.
+    """
+    best: tuple[str, float] | None = None
+    for r in sorted(rows, key=lambda r: r["date"]):
+        t = _value(r, "temp_min_c")
+        if t is not None and (best is None or t < best[1]):
+            best = (r["date"], t)
+    return best
+
+
 def _streak_text(streak: tuple[int, str, str]) -> str:
     n, first, last = streak
     span = first if n == 1 else f"{first} → {last}"
@@ -191,6 +205,9 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             f"- Warmest day: **{max(tmax):.1f} °C** · Coldest max: **{min(tmax):.1f} °C**",
             f"- Total rain: **{sum(rain):.1f} mm** · Dry days: **{sum(1 for r in rain if r == 0)}**",
         ]
+        night = coldest_night(weather)
+        if night:
+            lines.append(f"- Coldest night: **{night[1]:.1f} °C** on {night[0]}")
         streak = longest_dry_streak(weather)
         if streak:
             lines.append(f"- Longest dry streak: {_streak_text(streak)}")

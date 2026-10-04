@@ -207,3 +207,18 @@ def test_sparkline_draws_overlay_only_with_two_points():
     assert with_avg.count("<polyline") == 2 and "7-day avg" in with_avg
     too_short = report.sparkline_svg(values, overlay=report.rolling_mean(values, 4))
     assert too_short.count("<polyline") == 1
+
+
+def test_coldest_night_picks_lowest_min_earliest_on_tie():
+    rows = [
+        {"date": "2026-09-02", "temp_min_c": "6.5"},
+        {"date": "2026-09-01", "temp_min_c": "6.5"},
+        {"date": "2026-09-03", "temp_min_c": ""},
+        {"date": "2026-09-04", "temp_min_c": "9.0"},
+    ]
+    assert report.coldest_night(rows) == ("2026-09-01", 6.5)
+
+
+def test_coldest_night_none_without_values():
+    assert report.coldest_night([{"date": "2026-09-01", "temp_min_c": ""}]) is None
+    assert report.coldest_night([]) is None
