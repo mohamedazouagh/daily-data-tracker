@@ -222,3 +222,17 @@ def test_coldest_night_picks_lowest_min_earliest_on_tie():
 def test_coldest_night_none_without_values():
     assert report.coldest_night([{"date": "2026-09-01", "temp_min_c": ""}]) is None
     assert report.coldest_night([]) is None
+
+
+def test_largest_daily_range_skips_incomplete_rows():
+    rows = [
+        {"date": "2026-09-01", "temp_max_c": "20.0", "temp_min_c": "12.0"},
+        {"date": "2026-09-02", "temp_max_c": "25.0", "temp_min_c": ""},
+        {"date": "2026-09-03", "temp_max_c": "19.7", "temp_min_c": "7.9"},
+        {"date": "2026-09-04", "temp_max_c": "21.8", "temp_min_c": "10.0"},
+    ]
+    assert report.largest_daily_range(rows) == ("2026-09-03", 11.8)
+
+
+def test_largest_daily_range_none_without_pairs():
+    assert report.largest_daily_range([{"date": "2026-09-01", "temp_max_c": "20", "temp_min_c": ""}]) is None

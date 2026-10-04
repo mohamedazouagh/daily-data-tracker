@@ -135,6 +135,23 @@ def coldest_night(rows: list[dict]) -> tuple[str, float] | None:
     return best
 
 
+def largest_daily_range(rows: list[dict]) -> tuple[str, float] | None:
+    """Day with the biggest gap between max and min temperature, as (date, range °C).
+
+    Rows missing either value are skipped; the earliest date wins ties.
+    Returns None when no row has both values.
+    """
+    best: tuple[str, float] | None = None
+    for r in sorted(rows, key=lambda r: r["date"]):
+        hi, lo = _value(r, "temp_max_c"), _value(r, "temp_min_c")
+        if hi is None or lo is None:
+            continue
+        span = round(hi - lo, 1)
+        if best is None or span > best[1]:
+            best = (r["date"], span)
+    return best
+
+
 def _streak_text(streak: tuple[int, str, str]) -> str:
     n, first, last = streak
     span = first if n == 1 else f"{first} → {last}"
@@ -208,6 +225,9 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         night = coldest_night(weather)
         if night:
             lines.append(f"- Coldest night: **{night[1]:.1f} °C** on {night[0]}")
+        swing = largest_daily_range(weather)
+        if swing:
+            lines.append(f"- Largest day/night range: **{swing[1]:.1f} °C** on {swing[0]}")
         streak = longest_dry_streak(weather)
         if streak:
             lines.append(f"- Longest dry streak: {_streak_text(streak)}")

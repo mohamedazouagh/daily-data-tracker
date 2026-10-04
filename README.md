@@ -29,6 +29,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Warmest day: **26.2 °C** · Coldest max: **19.5 °C**
 - Total rain: **5.4 mm** · Dry days: **4**
 - Coldest night: **7.9 °C** on 2026-10-03
+- Largest day/night range: **11.8 °C** on 2026-10-03
 - Longest dry streak: **2 days** (2026-09-26 → 2026-09-27)
 - Longest warm streak (max > 20 °C): **6 days** (2026-09-26 → 2026-10-01)
 - Rain vs. sunshine correlation: **r = -0.68**
@@ -64,4 +65,5 @@ Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 - [x] Longest dry-day streak in Breda
 - [x] Longest warm streak (max temperature above 20 °C)
 - [x] Coldest night (lowest min temperature) and its date
-- [ ] Largest day/night temperature range (max − min) and its date
+- [x] Largest day/night temperature range (max − min) and its date
+- [ ] Sunniest day and average daily sunshine hours
