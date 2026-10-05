@@ -152,6 +152,26 @@ def largest_daily_range(rows: list[dict]) -> tuple[str, float] | None:
     return best
 
 
+def sunshine_summary(rows: list[dict]) -> tuple[str, float, float] | None:
+    """Sunniest day and the average daily sunshine, as (date, hours, mean hours).
+
+    Rows without a sunshine value are skipped; the earliest date wins ties.
+    Returns None when no row has a value.
+    """
+    best: tuple[str, float] | None = None
+    hours: list[float] = []
+    for r in sorted(rows, key=lambda r: r["date"]):
+        h = _value(r, "sunshine_h")
+        if h is None:
+            continue
+        hours.append(h)
+        if best is None or h > best[1]:
+            best = (r["date"], h)
+    if best is None:
+        return None
+    return best[0], best[1], mean(hours)
+
+
 def _streak_text(streak: tuple[int, str, str]) -> str:
     n, first, last = streak
     span = first if n == 1 else f"{first} → {last}"
@@ -228,6 +248,9 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         swing = largest_daily_range(weather)
         if swing:
             lines.append(f"- Largest day/night range: **{swing[1]:.1f} °C** on {swing[0]}")
+        sun = sunshine_summary(weather)
+        if sun:
+            lines.append(f"- Sunniest day: **{sun[1]:.1f} h** on {sun[0]} · Average sunshine: **{sun[2]:.1f} h/day**")
         streak = longest_dry_streak(weather)
         if streak:
             lines.append(f"- Longest dry streak: {_streak_text(streak)}")

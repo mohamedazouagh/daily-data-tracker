@@ -236,3 +236,29 @@ def test_largest_daily_range_skips_incomplete_rows():
 
 def test_largest_daily_range_none_without_pairs():
     assert report.largest_daily_range([{"date": "2026-09-01", "temp_max_c": "20", "temp_min_c": ""}]) is None
+
+
+def test_sunshine_summary_skips_missing_and_breaks_ties_early():
+    rows = [
+        {"date": "2026-09-03", "sunshine_h": "11.0"},
+        {"date": "2026-09-01", "sunshine_h": "11.0"},
+        {"date": "2026-09-02", "sunshine_h": ""},
+        {"date": "2026-09-04", "sunshine_h": "4.0"},
+    ]
+    day, best, avg = report.sunshine_summary(rows)
+    assert (day, best) == ("2026-09-01", 11.0)
+    assert abs(avg - 26.0 / 3) < 1e-9
+
+
+def test_sunshine_summary_none_without_values():
+    assert report.sunshine_summary([{"date": "2026-09-01", "sunshine_h": ""}]) is None
+    assert report.sunshine_summary([]) is None
+
+
+def test_stats_markdown_mentions_sunniest_day():
+    rows = [
+        {"date": "2026-09-01", "temp_max_c": "20", "temp_min_c": "10", "precip_mm": "0", "sunshine_h": "9.5"},
+        {"date": "2026-09-02", "temp_max_c": "21", "temp_min_c": "11", "precip_mm": "1", "sunshine_h": "3.5"},
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "Sunniest day: **9.5 h** on 2026-09-01 · Average sunshine: **6.5 h/day**" in md
