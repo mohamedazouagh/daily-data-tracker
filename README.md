@@ -31,6 +31,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Coldest night: **7.6 °C** on 2026-10-05
 - Largest day/night range: **13.2 °C** on 2026-10-05
 - Sunniest day: **11.0 h** on 2026-09-27 · Average sunshine: **8.9 h/day**
+- Wettest day: **2.2 mm** on 2026-10-01
 - Longest dry streak: **4 days** (2026-10-02 → 2026-10-05)
 - Longest warm streak (max > 20 °C): **6 days** (2026-09-26 → 2026-10-01)
 - Rain vs. sunshine correlation: **r = -0.71**
@@ -68,5 +69,6 @@ Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 - [x] Coldest night (lowest min temperature) and its date
 - [x] Largest day/night temperature range (max − min) and its date
 - [x] Sunniest day and average daily sunshine hours
-- [ ] Wettest day (most rain) and its date
+- [x] Wettest day (most rain) and its date
 - [ ] Longest stretch without a USD/EUR move above 0.5%
+- [ ] Rainiest week (highest 7-day rolling rain total)

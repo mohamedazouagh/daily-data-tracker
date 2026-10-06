@@ -262,3 +262,22 @@ def test_stats_markdown_mentions_sunniest_day():
     ]
     md = report.stats_markdown(rows, [])
     assert "Sunniest day: **9.5 h** on 2026-09-01 · Average sunshine: **6.5 h/day**" in md
+
+
+def _rain(day: str, mm) -> dict:
+    return {"date": day, "precip_mm": "" if mm is None else str(mm)}
+
+
+def test_wettest_day_picks_most_rain():
+    rows = [_rain("2026-09-28", 1.9), _rain("2026-09-30", 4.2), _rain("2026-09-29", 0.1)]
+    assert report.wettest_day(rows) == ("2026-09-30", 4.2)
+
+
+def test_wettest_day_tie_goes_to_earliest_and_skips_missing():
+    rows = [_rain("2026-10-02", 3.0), _rain("2026-10-01", 3.0), _rain("2026-10-03", None)]
+    assert report.wettest_day(rows) == ("2026-10-01", 3.0)
+
+
+def test_wettest_day_none_when_all_dry():
+    assert report.wettest_day([_rain("2026-10-01", 0.0), _rain("2026-10-02", None)]) is None
+    assert report.wettest_day([]) is None

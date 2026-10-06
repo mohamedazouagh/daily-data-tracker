@@ -172,6 +172,21 @@ def sunshine_summary(rows: list[dict]) -> tuple[str, float, float] | None:
     return best[0], best[1], mean(hours)
 
 
+def wettest_day(rows: list[dict]) -> tuple[str, float] | None:
+    """Day with the most rain as (date, precip_mm).
+
+    Rows without a rain value are skipped; the earliest date wins ties.
+    Returns None when no stored day had any rain (0 mm everywhere is not a
+    "wettest day").
+    """
+    best: tuple[str, float] | None = None
+    for r in sorted(rows, key=lambda r: r["date"]):
+        mm = _value(r, "precip_mm")
+        if mm is not None and mm > 0 and (best is None or mm > best[1]):
+            best = (r["date"], mm)
+    return best
+
+
 def _streak_text(streak: tuple[int, str, str]) -> str:
     n, first, last = streak
     span = first if n == 1 else f"{first} → {last}"
@@ -251,6 +266,8 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         sun = sunshine_summary(weather)
         if sun:
             lines.append(f"- Sunniest day: **{sun[1]:.1f} h** on {sun[0]} · Average sunshine: **{sun[2]:.1f} h/day**")
+        wet = wettest_day(weather)
+        lines.append(f"- Wettest day: **{wet[1]:.1f} mm** on {wet[0]}" if wet else "- Wettest day: no rain recorded yet")
         streak = longest_dry_streak(weather)
         if streak:
             lines.append(f"- Longest dry streak: {_streak_text(streak)}")
