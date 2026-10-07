@@ -281,3 +281,27 @@ def test_wettest_day_tie_goes_to_earliest_and_skips_missing():
 def test_wettest_day_none_when_all_dry():
     assert report.wettest_day([_rain("2026-10-01", 0.0), _rain("2026-10-02", None)]) is None
     assert report.wettest_day([]) is None
+
+
+def test_warmest_night_picks_highest_min_earliest_on_tie():
+    rows = [
+        {"date": "2026-09-03", "temp_min_c": "14.2"},
+        {"date": "2026-09-01", "temp_min_c": "14.2"},
+        {"date": "2026-09-02", "temp_min_c": ""},
+        {"date": "2026-09-04", "temp_min_c": "-1.0"},
+    ]
+    assert report.warmest_night(rows) == ("2026-09-01", 14.2)
+
+
+def test_warmest_night_none_without_values():
+    assert report.warmest_night([{"date": "2026-09-01", "temp_min_c": ""}]) is None
+    assert report.warmest_night([]) is None
+
+
+def test_stats_markdown_includes_warmest_night():
+    rows = [
+        {"date": "2026-09-01", "temp_max_c": "20.0", "temp_min_c": "9.0", "precip_mm": "0.0", "sunshine_h": "5.0"},
+        {"date": "2026-09-02", "temp_max_c": "22.0", "temp_min_c": "15.5", "precip_mm": "1.0", "sunshine_h": "3.0"},
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Warmest night: **15.5 °C** on 2026-09-02" in md
