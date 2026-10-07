@@ -23,18 +23,18 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 ## Stats
 
 <!-- stats:start -->
-**Days tracked:** 11 weather · 8 FX
+**Days tracked:** 12 weather · 8 FX
 
-- Average max temperature: **21.6 °C**
+- Average max temperature: **21.7 °C**
 - Warmest day: **26.2 °C** · Coldest max: **19.5 °C**
-- Total rain: **5.4 mm** · Dry days: **7**
+- Total rain: **5.4 mm** · Dry days: **8**
 - Coldest night: **7.6 °C** on 2026-10-05
-- Largest day/night range: **13.2 °C** on 2026-10-05
-- Sunniest day: **11.0 h** on 2026-09-27 · Average sunshine: **9.1 h/day**
+- Largest day/night range: **13.4 °C** on 2026-09-25
+- Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **9.2 h/day**
 - Wettest day: **2.2 mm** on 2026-10-01
 - Longest dry streak: **5 days** (2026-10-02 → 2026-10-06)
-- Longest warm streak (max > 20 °C): **6 days** (2026-09-26 → 2026-10-01)
-- Rain vs. sunshine correlation: **r = -0.72**
+- Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
+- Rain vs. sunshine correlation: **r = -0.73**
 
 Last 7 days (Breda):
 
