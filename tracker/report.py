@@ -222,6 +222,28 @@ def rainiest_week(rows: list[dict], window: int = 7) -> tuple[str, str, float] |
     return best
 
 
+def week_over_week_max(rows: list[dict]) -> tuple[float, float, float] | None:
+    """Average max temperature of the last 7 calendar days vs. the 7 before.
+
+    Windows are anchored on the latest stored date (that day and the six
+    before it, then the seven days before those), so gaps do not shift them.
+    Returns (this week's mean, previous week's mean, difference), or None when
+    either window has no max temperature yet.
+    """
+    temps = {
+        date.fromisoformat(r["date"]): t for r in rows if (t := _value(r, "temp_max_c")) is not None
+    }
+    if not temps:
+        return None
+    latest = max(temps)
+    this_week = [t for d, t in temps.items() if 0 <= (latest - d).days < 7]
+    prev_week = [t for d, t in temps.items() if 7 <= (latest - d).days < 14]
+    if not this_week or not prev_week:
+        return None
+    a, b = mean(this_week), mean(prev_week)
+    return a, b, a - b
+
+
 def _streak_text(streak: tuple[int, str, str]) -> str:
     n, first, last = streak
     span = first if n == 1 else f"{first} → {last}"
@@ -290,6 +312,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         lines += [
             f"- Average max temperature: **{mean(tmax):.1f} °C**",
             f"- Warmest day: **{max(tmax):.1f} °C** · Coldest max: **{min(tmax):.1f} °C**",
+        ]
+        wow = week_over_week_max(weather)
+        if wow:
+            lines.append(
+                f"- Last 7 days vs. the 7 before (avg max): **{wow[0]:.1f} °C** vs. {wow[1]:.1f} °C ({wow[2]:+.1f} °C)"
+            )
+        lines += [
             f"- Total rain: **{sum(rain):.1f} mm** · Dry days: **{sum(1 for r in rain if r == 0)}**",
         ]
         night = coldest_night(weather)

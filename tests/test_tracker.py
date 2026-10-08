@@ -335,3 +335,35 @@ def test_stats_markdown_includes_rainiest_week():
     md = report.stats_markdown(rows, [])
     assert "- Rainiest week: **7.0 mm** (2026-10-01 → 2026-10-07)" in md
     assert "needs 7 consecutive days" in report.stats_markdown(rows[:3], [])
+
+
+def _tmax_days(start: str, temps: list) -> list[dict]:
+    first = date.fromisoformat(start)
+    return [
+        {"date": (first + timedelta(days=i)).isoformat(), "temp_max_c": "" if t is None else str(t)}
+        for i, t in enumerate(temps)
+    ]
+
+
+def test_week_over_week_max_compares_calendar_windows():
+    rows = _tmax_days("2026-09-24", [10] * 7 + [14] * 7)
+    assert report.week_over_week_max(rows) == (14, 10, 4)
+
+
+def test_week_over_week_max_handles_gaps_and_missing_values():
+    # latest 2026-10-07; this week 10-01..07, previous week 09-24..30
+    rows = _tmax_days("2026-09-29", [12, None]) + _tmax_days("2026-10-05", [20, 22, 24])
+    this_week, prev_week, diff = report.week_over_week_max(rows)
+    assert (this_week, prev_week) == (22, 12)
+    assert diff == 10
+
+
+def test_week_over_week_max_none_without_previous_week():
+    assert report.week_over_week_max(_tmax_days("2026-10-01", [15] * 7)) is None
+    assert report.week_over_week_max([]) is None
+
+
+def test_stats_markdown_includes_week_over_week_line():
+    rows = [dict(r, temp_min_c=5, precip_mm=0, sunshine_h=4) for r in _tmax_days("2026-09-24", [18] * 7 + [16.5] * 7)]
+    md = report.stats_markdown(rows, [])
+    assert "- Last 7 days vs. the 7 before (avg max): **16.5 °C** vs. 18.0 °C (-1.5 °C)" in md
