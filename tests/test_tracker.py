@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from tracker import report, sources, store
 
 WEATHER_PAYLOAD = {
@@ -305,3 +307,31 @@ def test_stats_markdown_includes_warmest_night():
     ]
     md = report.stats_markdown(rows, [])
     assert "- Warmest night: **15.5 °C** on 2026-09-02" in md
+
+
+def _rain_days(start: str, amounts: list) -> list[dict]:
+    first = date.fromisoformat(start)
+    return [_rain((first + timedelta(days=i)).isoformat(), mm) for i, mm in enumerate(amounts)]
+
+
+def test_rainiest_week_finds_highest_seven_day_total():
+    rows = _rain_days("2026-10-01", [0, 1, 0, 0, 5, 0, 0, 2, 0.4])
+    # windows: 10-01..07 = 6.0, 10-02..08 = 8.0, 10-03..09 = 7.4
+    assert report.rainiest_week(rows) == ("2026-10-02", "2026-10-08", 8.0)
+
+
+def test_rainiest_week_needs_full_windows_and_takes_earliest_tie():
+    assert report.rainiest_week(_rain_days("2026-10-01", [9, 9, 9, 9, 9, 9])) is None
+    gap = _rain_days("2026-10-01", [1] * 4) + _rain_days("2026-10-06", [1] * 4)
+    assert report.rainiest_week(gap) is None  # 10-05 missing, so no 7-day run
+    missing_value = _rain_days("2026-10-01", [1, 1, 1, "", 1, 1, 1])
+    assert report.rainiest_week(missing_value) is None
+    flat = _rain_days("2026-10-01", [1] * 8)
+    assert report.rainiest_week(flat) == ("2026-10-01", "2026-10-07", 7.0)
+
+
+def test_stats_markdown_includes_rainiest_week():
+    rows = [dict(r, temp_max_c=20, temp_min_c=10, sunshine_h=5) for r in _rain_days("2026-10-01", [1] * 7)]
+    md = report.stats_markdown(rows, [])
+    assert "- Rainiest week: **7.0 mm** (2026-10-01 → 2026-10-07)" in md
+    assert "needs 7 consecutive days" in report.stats_markdown(rows[:3], [])

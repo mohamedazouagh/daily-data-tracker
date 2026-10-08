@@ -201,6 +201,27 @@ def wettest_day(rows: list[dict]) -> tuple[str, float] | None:
     return best
 
 
+def rainiest_week(rows: list[dict], window: int = 7) -> tuple[str, str, float] | None:
+    """Highest rain total over ``window`` consecutive calendar days, as (first, last, mm).
+
+    Only windows where every day is stored with a rain value count, so a gap
+    or a missing value never makes a short stretch look like a full week.
+    The earliest window wins ties. Returns None when no full window exists.
+    """
+    by_day = {
+        date.fromisoformat(r["date"]): mm for r in rows if (mm := _value(r, "precip_mm")) is not None
+    }
+    best: tuple[str, str, float] | None = None
+    for start in sorted(by_day):
+        days = [start + timedelta(days=i) for i in range(window)]
+        if not all(d in by_day for d in days):
+            continue
+        total = round(sum(by_day[d] for d in days), 1)
+        if best is None or total > best[2]:
+            best = (days[0].isoformat(), days[-1].isoformat(), total)
+    return best
+
+
 def _streak_text(streak: tuple[int, str, str]) -> str:
     n, first, last = streak
     span = first if n == 1 else f"{first} → {last}"
@@ -285,6 +306,12 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(f"- Sunniest day: **{sun[1]:.1f} h** on {sun[0]} · Average sunshine: **{sun[2]:.1f} h/day**")
         wet = wettest_day(weather)
         lines.append(f"- Wettest day: **{wet[1]:.1f} mm** on {wet[0]}" if wet else "- Wettest day: no rain recorded yet")
+        week = rainiest_week(weather)
+        lines.append(
+            f"- Rainiest week: **{week[2]:.1f} mm** ({week[0]} → {week[1]})"
+            if week
+            else "- Rainiest week: needs 7 consecutive days"
+        )
         streak = longest_dry_streak(weather)
         if streak:
             lines.append(f"- Longest dry streak: {_streak_text(streak)}")
