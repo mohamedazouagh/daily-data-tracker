@@ -367,3 +367,31 @@ def test_stats_markdown_includes_week_over_week_line():
     rows = [dict(r, temp_min_c=5, precip_mm=0, sunshine_h=4) for r in _tmax_days("2026-09-24", [18] * 7 + [16.5] * 7)]
     md = report.stats_markdown(rows, [])
     assert "- Last 7 days vs. the 7 before (avg max): **16.5 °C** vs. 18.0 °C (-1.5 °C)" in md
+
+
+def _usd_days(values):
+    days = ["2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-05", "2026-10-06"]
+    return [{"date": d, "usd": v} for d, v in zip(days, values)]
+
+
+def test_calmest_fx_stretch_counts_business_days_between_big_moves():
+    # 1.00 -> 1.02 (+2%, breaks), then 1.02 -> 1.021 -> 1.019 -> 1.020 calm, then +1% breaks
+    fx = _usd_days([1.00, 1.02, 1.021, 1.019, 1.020, 1.0302, 1.031])
+    assert report.calmest_fx_stretch(fx) == (4, "2026-09-29", "2026-10-02")
+
+
+def test_calmest_fx_stretch_threshold_is_inclusive_and_missing_breaks():
+    fx = _usd_days([1.0, 1.005, "", 2.0, 2.001])
+    # +0.5% exactly is calm; the missing rate splits the run; earliest wins the tie
+    assert report.calmest_fx_stretch(fx) == (2, "2026-09-28", "2026-09-29")
+
+
+def test_calmest_fx_stretch_none_when_every_move_is_big():
+    assert report.calmest_fx_stretch(_usd_days([1.0, 1.1, 1.2])) is None
+    assert report.calmest_fx_stretch([]) is None
+
+
+def test_stats_markdown_includes_calm_usd_line():
+    fx = [dict(r, gbp=0.85, chf=0.93, **{"try": 55.0}) for r in _usd_days([1.0, 1.001, 1.002])]
+    md = report.stats_markdown([], fx)
+    assert "Longest calm USD stretch (no daily move above 0.5%): **3 business days** (2026-09-28 → 2026-09-30)" in md

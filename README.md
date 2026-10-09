@@ -57,6 +57,8 @@ Change vs. 2026-10-07: USD +0.08% · GBP +0.06% · CHF +0.18% · TRY +0.13%
 
 Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 
+Longest calm USD stretch (no daily move above 0.5%): **4 business days** (2026-09-25 → 2026-09-30)
+
 <!-- stats:end -->
 
 ## Roadmap
@@ -74,8 +76,9 @@ Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 - [x] Sunniest day and average daily sunshine hours
 - [x] Wettest day (most rain) and its date
 - [x] Warmest night (highest min temperature) and its date
-- [ ] Longest stretch without a USD/EUR move above 0.5%
+- [x] Longest stretch without a USD/EUR move above 0.5%
 - [x] Rainiest week (highest 7-day rolling rain total)
 - [x] Week-over-week change in average max temperature
 - [ ] Monthly averages table (max/min temperature, rain, sunshine) once a full month is stored
 - [ ] First autumn frost: earliest night with min temperature below 0 °C
+- [ ] Average weekday rain: which day of the week is wettest so far

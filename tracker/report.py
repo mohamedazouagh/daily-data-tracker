@@ -244,6 +244,35 @@ def week_over_week_max(rows: list[dict]) -> tuple[float, float, float] | None:
     return a, b, a - b
 
 
+def calmest_fx_stretch(
+    fx: list[dict], code: str = "usd", threshold: float = 0.5
+) -> tuple[int, str, str] | None:
+    """Longest run of stored business days where ``code`` never moved more than ``threshold`` %.
+
+    A stretch is a sequence of consecutive stored rows in which every
+    day-over-day change is at most ``threshold`` percent in absolute value.
+    Its length counts the rows (business days) in it, so two rows with a calm
+    move between them is a stretch of 2. A missing or zero rate breaks the
+    stretch. Returns (days, first date, last date), earliest stretch wins
+    ties, or None when no two consecutive rows can be compared calmly.
+    """
+    best: tuple[int, str, str] | None = None
+    run_len, run_start = 0, ""
+    for prev, cur in zip(fx, fx[1:]):
+        a, b = _value(prev, code), _value(cur, code)
+        calm = a not in (None, 0) and b is not None and abs((b - a) / a * 100) <= threshold
+        if not calm:
+            run_len = 0
+            continue
+        if run_len == 0:
+            run_len, run_start = 2, prev["date"]
+        else:
+            run_len += 1
+        if best is None or run_len > best[0]:
+            best = (run_len, run_start, cur["date"])
+    return best
+
+
 def _streak_text(streak: tuple[int, str, str]) -> str:
     n, first, last = streak
     span = first if n == 1 else f"{first} → {last}"
@@ -382,6 +411,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         if move:
             code, day, pct = move
             lines += [f"Biggest single-day move since tracking started: {code.upper()} {pct:+.2f}% on {day}", ""]
+        calm = calmest_fx_stretch(fx)
+        if calm:
+            n, first, last_day = calm
+            lines += [
+                f"Longest calm USD stretch (no daily move above 0.5%): **{n} business days** ({first} → {last_day})",
+                "",
+            ]
     return "\n".join(lines)
 
 
