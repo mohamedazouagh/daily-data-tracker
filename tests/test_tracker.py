@@ -395,3 +395,34 @@ def test_stats_markdown_includes_calm_usd_line():
     fx = [dict(r, gbp=0.85, chf=0.93, **{"try": 55.0}) for r in _usd_days([1.0, 1.001, 1.002])]
     md = report.stats_markdown([], fx)
     assert "Longest calm USD stretch (no daily move above 0.5%): **3 business days** (2026-09-28 → 2026-09-30)" in md
+
+
+def _rain_days(start, values):
+    first = date.fromisoformat(start)
+    return [{"date": (first + timedelta(days=i)).isoformat(), "precip_mm": v} for i, v in enumerate(values)]
+
+
+def test_wettest_weekday_averages_including_dry_days():
+    # 2026-09-28 is a Monday; two weeks of data
+    rows = _rain_days("2026-09-28", [4.0, 0, 0, 0, 0, 3.0, 0, 0.0, 0, 0, 0, 0, 3.0, 0])
+    # Monday: (4 + 0) / 2 = 2.0; Saturday: (3 + 3) / 2 = 3.0
+    assert report.wettest_weekday(rows) == ("Saturday", 3.0, 2)
+
+
+def test_wettest_weekday_tie_goes_to_earlier_weekday_and_skips_missing():
+    rows = _rain_days("2026-09-28", [2.0, 2.0, ""])
+    assert report.wettest_weekday(rows) == ("Monday", 2.0, 1)
+
+
+def test_wettest_weekday_none_without_rain():
+    assert report.wettest_weekday([]) is None
+    assert report.wettest_weekday(_rain_days("2026-09-28", [0, 0.0, ""])) is None
+
+
+def test_stats_markdown_includes_wettest_weekday_line():
+    rows = [
+        dict(r, temp_max_c=15.0, temp_min_c=8.0, sunshine_h=5.0)
+        for r in _rain_days("2026-09-28", [1.0, 5.0, 0.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Wettest weekday so far: **Tuesday** (5.0 mm on average over 1 day)" in md

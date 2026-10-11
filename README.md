@@ -37,6 +37,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Rainiest week: **22.0 mm** (2026-10-04 → 2026-10-10)
 - Longest dry streak: **5 days** (2026-10-02 → 2026-10-06)
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
+- Wettest weekday so far: **Wednesday** (4.6 mm on average over 2 days)
 - Rain vs. sunshine correlation: **r = -0.62**
 
 Last 7 days (Breda):
@@ -81,4 +82,5 @@ Longest calm USD stretch (no daily move above 0.5%): **4 business days** (2026-0
 - [x] Week-over-week change in average max temperature
 - [ ] Monthly averages table (max/min temperature, rain, sunshine) once a full month is stored
 - [ ] First autumn frost: earliest night with min temperature below 0 °C
-- [ ] Average weekday rain: which day of the week is wettest so far
+- [x] Average weekday rain: which day of the week is wettest so far
+- [ ] Sunshine by weekday: which day of the week gets the most sun on average
