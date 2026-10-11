@@ -149,6 +149,19 @@ def warmest_night(rows: list[dict]) -> tuple[str, float] | None:
     return best
 
 
+def first_frost(rows: list[dict]) -> tuple[str, float] | None:
+    """Earliest night with a minimum temperature below 0 °C, as (date, temp_min_c).
+
+    Strictly below zero: a night at exactly 0.0 °C is not frost. Rows without
+    a min temperature are skipped. Returns None when no frost night is stored.
+    """
+    for r in sorted(rows, key=lambda r: r["date"]):
+        t = _value(r, "temp_min_c")
+        if t is not None and t < 0:
+            return r["date"], t
+    return None
+
+
 def largest_daily_range(rows: list[dict]) -> tuple[str, float] | None:
     """Day with the biggest gap between max and min temperature, as (date, range °C).
 
@@ -377,6 +390,10 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         night = coldest_night(weather)
         if night:
             lines.append(f"- Coldest night: **{night[1]:.1f} °C** on {night[0]}")
+        frost = first_frost(weather)
+        lines.append(
+            f"- First frost: **{frost[1]:.1f} °C** on {frost[0]}" if frost else "- First frost (min below 0 °C): none yet"
+        )
         mild = warmest_night(weather)
         if mild:
             lines.append(f"- Warmest night: **{mild[1]:.1f} °C** on {mild[0]}")

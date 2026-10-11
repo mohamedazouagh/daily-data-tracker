@@ -426,3 +426,31 @@ def test_stats_markdown_includes_wettest_weekday_line():
     ]
     md = report.stats_markdown(rows, [])
     assert "- Wettest weekday so far: **Tuesday** (5.0 mm on average over 1 day)" in md
+
+
+def _nights(values):
+    first = date.fromisoformat("2026-11-01")
+    return [{"date": (first + timedelta(days=i)).isoformat(), "temp_min_c": v} for i, v in enumerate(values)]
+
+
+def test_first_frost_is_earliest_night_strictly_below_zero():
+    rows = _nights([2.0, 0.0, "", -1.5, -3.0])
+    assert report.first_frost(rows) == ("2026-11-04", -1.5)
+
+
+def test_first_frost_ignores_input_order():
+    rows = _nights([1.0, -0.5, -2.0])[::-1]
+    assert report.first_frost(rows) == ("2026-11-02", -0.5)
+
+
+def test_first_frost_none_without_frost():
+    assert report.first_frost(_nights([0.0, 3.2, ""])) is None
+    assert report.first_frost([]) is None
+
+
+def test_stats_markdown_frost_line():
+    base = {"temp_max_c": 8.0, "precip_mm": 0.0, "sunshine_h": 3.0}
+    md = report.stats_markdown([dict(r, **base) for r in _nights([1.0, -0.4])], [])
+    assert "- First frost: **-0.4 °C** on 2026-11-02" in md
+    md = report.stats_markdown([dict(r, **base) for r in _nights([1.0])], [])
+    assert "- First frost (min below 0 °C): none yet" in md

@@ -30,6 +30,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Last 7 days vs. the 7 before (avg max): **18.7 °C** vs. 22.1 °C (-3.4 °C)
 - Total rain: **27.4 mm** · Dry days: **8**
 - Coldest night: **7.6 °C** on 2026-10-05
+- First frost (min below 0 °C): none yet
 - Warmest night: **17.8 °C** on 2026-09-30
 - Largest day/night range: **13.4 °C** on 2026-09-25
 - Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **8.8 h/day**
@@ -81,6 +82,7 @@ Longest calm USD stretch (no daily move above 0.5%): **4 business days** (2026-0
 - [x] Rainiest week (highest 7-day rolling rain total)
 - [x] Week-over-week change in average max temperature
 - [ ] Monthly averages table (max/min temperature, rain, sunshine) once a full month is stored
-- [ ] First autumn frost: earliest night with min temperature below 0 °C
+- [x] First autumn frost: earliest night with min temperature below 0 °C
+- [ ] Count of frost nights per month once winter data comes in
 - [x] Average weekday rain: which day of the week is wettest so far
 - [ ] Sunshine by weekday: which day of the week gets the most sun on average
