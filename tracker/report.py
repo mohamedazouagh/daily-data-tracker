@@ -310,6 +310,28 @@ def wettest_weekday(rows: list[dict]) -> tuple[str, float, int] | None:
     return WEEKDAYS[best_day], avg, len(by_weekday[best_day])
 
 
+def sunniest_weekday(rows: list[dict]) -> tuple[str, float, int] | None:
+    """Day of the week with the most sunshine on average, as (weekday, mean hours, days counted).
+
+    Every stored day with a sunshine value counts towards its weekday's
+    average, overcast days (0 h) included. Ties go to the earlier weekday
+    (Monday first). Returns None when no day has a sunshine value or no sun
+    has been recorded at all.
+    """
+    by_weekday: dict[int, list[float]] = {}
+    for r in rows:
+        h = _value(r, "sunshine_h")
+        if h is not None:
+            by_weekday.setdefault(date.fromisoformat(r["date"]).weekday(), []).append(h)
+    if not by_weekday:
+        return None
+    best_day = max(sorted(by_weekday), key=lambda d: mean(by_weekday[d]))
+    avg = mean(by_weekday[best_day])
+    if avg == 0:
+        return None
+    return WEEKDAYS[best_day], avg, len(by_weekday[best_day])
+
+
 def _streak_text(streak: tuple[int, str, str]) -> str:
     n, first, last = streak
     span = first if n == 1 else f"{first} → {last}"
@@ -423,6 +445,9 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         wd = wettest_weekday(weather)
         if wd:
             lines.append(f"- Wettest weekday so far: **{wd[0]}** ({wd[1]:.1f} mm on average over {wd[2]} day{'s' if wd[2] != 1 else ''})")
+        sd = sunniest_weekday(weather)
+        if sd:
+            lines.append(f"- Sunniest weekday so far: **{sd[0]}** ({sd[1]:.1f} h on average over {sd[2]} day{'s' if sd[2] != 1 else ''})")
         r = rain_sun_correlation(weather)
         lines.append(
             f"- Rain vs. sunshine correlation: **r = {r:+.2f}**"

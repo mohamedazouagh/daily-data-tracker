@@ -454,3 +454,33 @@ def test_stats_markdown_frost_line():
     assert "- First frost: **-0.4 °C** on 2026-11-02" in md
     md = report.stats_markdown([dict(r, **base) for r in _nights([1.0])], [])
     assert "- First frost (min below 0 °C): none yet" in md
+
+
+def _sun_days(start, values):
+    first = date.fromisoformat(start)
+    return [{"date": (first + timedelta(days=i)).isoformat(), "sunshine_h": v} for i, v in enumerate(values)]
+
+
+def test_sunniest_weekday_averages_including_overcast_days():
+    # 2026-09-28 is a Monday; Friday gets 10 h and 0 h, Sunday 6 h twice
+    rows = _sun_days("2026-09-28", [4.0, 1.0, 1.0, 1.0, 10.0, 2.0, 6.0, 4.0, 1.0, 1.0, 1.0, 0.0, 2.0, 6.0])
+    assert report.sunniest_weekday(rows) == ("Sunday", 6.0, 2)
+
+
+def test_sunniest_weekday_tie_goes_to_earlier_weekday_and_skips_missing():
+    rows = _sun_days("2026-09-28", ["", 3.0, 3.0])
+    assert report.sunniest_weekday(rows) == ("Tuesday", 3.0, 1)
+
+
+def test_sunniest_weekday_none_without_sun():
+    assert report.sunniest_weekday([]) is None
+    assert report.sunniest_weekday(_sun_days("2026-09-28", [0, 0.0, ""])) is None
+
+
+def test_stats_markdown_includes_sunniest_weekday_line():
+    rows = [
+        dict(r, temp_max_c=15.0, temp_min_c=8.0, precip_mm=0.0)
+        for r in _sun_days("2026-09-28", [2.0, 9.5, 4.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Sunniest weekday so far: **Tuesday** (9.5 h on average over 1 day)" in md
