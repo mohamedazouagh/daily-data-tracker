@@ -62,13 +62,16 @@ Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 
 Longest calm USD stretch (no daily move above 0.5%): **4 business days** (2026-09-25 → 2026-09-30)
 
+USD weekend gaps vs. weekdays (avg absolute move): **0.20%** over 2 gaps vs. 0.38% over 8 weekday moves
+
 <!-- stats:end -->
 
 ## Roadmap
 
 - [ ] Monthly summary notebook (pandas)
 - [x] Rain vs. sunshine correlation
-- [ ] Weekday vs. weekend exchange-rate gaps
+- [x] Weekday vs. weekend exchange-rate gaps
+- [ ] Weekend-gap vs. weekday moves for GBP, CHF and TRY too (USD only for now)
 - [x] Day-over-day % change for each EUR rate
 - [x] Rolling 7-day average temperature in the chart
 - [x] Biggest single-day FX move since tracking started

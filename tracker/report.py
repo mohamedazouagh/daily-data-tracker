@@ -286,6 +286,29 @@ def calmest_fx_stretch(
     return best
 
 
+def weekend_gap_moves(fx: list[dict], code: str = "usd") -> tuple[float, int, float, int] | None:
+    """Average absolute % move of ``code`` across weekend gaps vs. back-to-back business days.
+
+    A pair of consecutive stored rows whose dates are more than one day apart
+    (e.g. Friday -> Monday) is a gap move; a pair exactly one day apart is a
+    plain daily move. Pairs with a missing or zero rate are skipped. Returns
+    (mean gap move %, gap pairs, mean daily move %, daily pairs), or None
+    until both kinds have at least one pair.
+    """
+    gaps: list[float] = []
+    daily: list[float] = []
+    for prev, cur in zip(fx, fx[1:]):
+        a, b = _value(prev, code), _value(cur, code)
+        if a in (None, 0) or b is None:
+            continue
+        move = abs((b - a) / a * 100)
+        days = (date.fromisoformat(cur["date"]) - date.fromisoformat(prev["date"])).days
+        (gaps if days > 1 else daily).append(move)
+    if not gaps or not daily:
+        return None
+    return mean(gaps), len(gaps), mean(daily), len(daily)
+
+
 WEEKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 
@@ -485,6 +508,14 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             n, first, last_day = calm
             lines += [
                 f"Longest calm USD stretch (no daily move above 0.5%): **{n} business days** ({first} → {last_day})",
+                "",
+            ]
+        gap = weekend_gap_moves(fx)
+        if gap:
+            g, gn, d, dn = gap
+            lines += [
+                f"USD weekend gaps vs. weekdays (avg absolute move): **{g:.2f}%** over {gn} gap{'s' if gn != 1 else ''}"
+                f" vs. {d:.2f}% over {dn} weekday move{'s' if dn != 1 else ''}",
                 "",
             ]
     return "\n".join(lines)

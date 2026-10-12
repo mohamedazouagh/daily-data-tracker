@@ -484,3 +484,39 @@ def test_stats_markdown_includes_sunniest_weekday_line():
     ]
     md = report.stats_markdown(rows, [])
     assert "- Sunniest weekday so far: **Tuesday** (9.5 h on average over 1 day)" in md
+
+
+def _usd_on(pairs):
+    return [{"date": d, "usd": v} for d, v in pairs]
+
+
+def test_weekend_gap_moves_splits_gaps_from_daily_moves():
+    fx = _usd_on([
+        ("2026-10-01", 1.00),  # Thu
+        ("2026-10-02", 1.01),  # Fri: +1% daily
+        ("2026-10-05", 0.99981),  # Mon: -1.01% over the weekend gap
+        ("2026-10-06", 0.99981),  # Tue: 0% daily
+    ])
+    g, gn, d, dn = report.weekend_gap_moves(fx)
+    assert (gn, dn) == (1, 2)
+    assert round(g, 2) == 1.01
+    assert round(d, 2) == 0.50
+
+
+def test_weekend_gap_moves_skips_missing_and_zero_rates():
+    fx = _usd_on([("2026-10-02", 0), ("2026-10-05", 1.0), ("2026-10-06", ""), ("2026-10-07", 1.0)])
+    assert report.weekend_gap_moves(fx) is None
+
+
+def test_weekend_gap_moves_needs_both_kinds():
+    assert report.weekend_gap_moves([]) is None
+    assert report.weekend_gap_moves(_usd_on([("2026-10-05", 1.0), ("2026-10-06", 1.1)])) is None
+
+
+def test_stats_markdown_includes_weekend_gap_line():
+    fx = [
+        dict(r, gbp=0.85, chf=0.93, **{"try": 55.0})
+        for r in _usd_on([("2026-10-01", 1.0), ("2026-10-02", 1.01), ("2026-10-05", 0.99981)])
+    ]
+    md = report.stats_markdown([], fx)
+    assert "USD weekend gaps vs. weekdays (avg absolute move): **1.01%** over 1 gap vs. 1.00% over 1 weekday move" in md
