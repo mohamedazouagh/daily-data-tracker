@@ -23,19 +23,19 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 ## Stats
 
 <!-- stats:start -->
-**Days tracked:** 16 weather · 11 FX
+**Days tracked:** 17 weather · 11 FX
 
-- Average max temperature: **20.5 °C**
+- Average max temperature: **20.1 °C**
 - Warmest day: **26.2 °C** · Coldest max: **14.1 °C**
-- Last 7 days vs. the 7 before (avg max): **18.7 °C** vs. 22.1 °C (-3.4 °C)
-- Total rain: **27.4 mm** · Dry days: **8**
+- Last 7 days vs. the 7 before (avg max): **17.8 °C** vs. 21.8 °C (-4.0 °C)
+- Total rain: **28.3 mm** · Dry days: **8**
 - Coldest night: **7.6 °C** on 2026-10-05
 - First frost (min below 0 °C): none yet
 - Warmest night: **17.8 °C** on 2026-09-30
 - Largest day/night range: **13.4 °C** on 2026-09-25
-- Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **8.8 h/day**
+- Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **8.9 h/day**
 - Wettest day: **8.1 mm** on 2026-10-07
-- Rainiest week: **22.0 mm** (2026-10-04 → 2026-10-10)
+- Rainiest week: **22.9 mm** (2026-10-05 → 2026-10-11)
 - Longest dry streak: **5 days** (2026-10-02 → 2026-10-06)
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Wednesday** (4.6 mm on average over 2 days)
@@ -45,13 +45,13 @@ Last 7 days (Breda):
 
 | Date | Max °C | Min °C | Rain mm | Sun h |
 |---|---|---|---|---|
+| 2026-10-11 | 14.2 | 7.9 | 0.9 | 10.79 |
 | 2026-10-10 | 14.1 | 9.2 | 4.4 | 9.74 |
 | 2026-10-09 | 16.8 | 8.7 | 7.6 | 1.16 |
 | 2026-10-08 | 15.1 | 10.8 | 1.9 | 10.96 |
 | 2026-10-07 | 22.2 | 11.5 | 8.1 | 7.75 |
 | 2026-10-06 | 21.6 | 10.8 | 0.0 | 11.0 |
 | 2026-10-05 | 20.8 | 7.6 | 0.0 | 9.83 |
-| 2026-10-04 | 20.2 | 9.0 | 0.0 | 11.0 |
 
 Latest EUR rates (2026-10-09): USD 1.1206 · GBP 0.84763 · CHF 0.9313 · TRY 55.1033
 
