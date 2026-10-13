@@ -23,46 +23,46 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 ## Stats
 
 <!-- stats:start -->
-**Days tracked:** 17 weather · 11 FX
+**Days tracked:** 18 weather · 12 FX
 
-- Average max temperature: **20.1 °C**
+- Average max temperature: **20.0 °C**
 - Warmest day: **26.2 °C** · Coldest max: **14.1 °C**
-- Last 7 days vs. the 7 before (avg max): **17.8 °C** vs. 21.8 °C (-4.0 °C)
-- Total rain: **28.3 mm** · Dry days: **8**
-- Coldest night: **7.6 °C** on 2026-10-05
+- Last 7 days vs. the 7 before (avg max): **17.3 °C** vs. 21.7 °C (-4.5 °C)
+- Total rain: **28.3 mm** · Dry days: **9**
+- Coldest night: **4.8 °C** on 2026-10-12
 - First frost (min below 0 °C): none yet
 - Warmest night: **17.8 °C** on 2026-09-30
 - Largest day/night range: **13.4 °C** on 2026-09-25
-- Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **8.9 h/day**
+- Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **9.0 h/day**
 - Wettest day: **8.1 mm** on 2026-10-07
 - Rainiest week: **22.9 mm** (2026-10-05 → 2026-10-11)
 - Longest dry streak: **5 days** (2026-10-02 → 2026-10-06)
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Wednesday** (4.6 mm on average over 2 days)
 - Sunniest weekday so far: **Sunday** (10.9 h on average over 3 days)
-- Rain vs. sunshine correlation: **r = -0.62**
+- Rain vs. sunshine correlation: **r = -0.63**
 
 Last 7 days (Breda):
 
 | Date | Max °C | Min °C | Rain mm | Sun h |
 |---|---|---|---|---|
+| 2026-10-12 | 16.8 | 4.8 | 0.0 | 10.57 |
 | 2026-10-11 | 14.2 | 7.9 | 0.9 | 10.79 |
 | 2026-10-10 | 14.1 | 9.2 | 4.4 | 9.74 |
 | 2026-10-09 | 16.8 | 8.7 | 7.6 | 1.16 |
 | 2026-10-08 | 15.1 | 10.8 | 1.9 | 10.96 |
 | 2026-10-07 | 22.2 | 11.5 | 8.1 | 7.75 |
 | 2026-10-06 | 21.6 | 10.8 | 0.0 | 11.0 |
-| 2026-10-05 | 20.8 | 7.6 | 0.0 | 9.83 |
 
-Latest EUR rates (2026-10-09): USD 1.1206 · GBP 0.84763 · CHF 0.9313 · TRY 55.1033
+Latest EUR rates (2026-10-12): USD 1.1181 · GBP 0.84478 · CHF 0.9312 · TRY 55.1635
 
-Change vs. 2026-10-08: USD +0.18% · GBP +0.08% · CHF -0.14% · TRY +0.09%
+Change vs. 2026-10-09: USD -0.22% · GBP -0.34% · CHF -0.01% · TRY +0.11%
 
 Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 
 Longest calm USD stretch (no daily move above 0.5%): **4 business days** (2026-09-25 → 2026-09-30)
 
-USD weekend gaps vs. weekdays (avg absolute move): **0.20%** over 2 gaps vs. 0.38% over 8 weekday moves
+USD weekend gaps vs. weekdays (avg absolute move): **0.21%** over 3 gaps vs. 0.38% over 8 weekday moves
 
 <!-- stats:end -->
 
