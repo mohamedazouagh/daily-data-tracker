@@ -519,4 +519,30 @@ def test_stats_markdown_includes_weekend_gap_line():
         for r in _usd_on([("2026-10-01", 1.0), ("2026-10-02", 1.01), ("2026-10-05", 0.99981)])
     ]
     md = report.stats_markdown([], fx)
-    assert "USD weekend gaps vs. weekdays (avg absolute move): **1.01%** over 1 gap vs. 1.00% over 1 weekday move" in md
+    assert "Weekend gaps vs. weekdays (avg absolute move):" in md
+    assert "- USD: **1.01%** over 1 gap vs. 1.00% over 1 weekday move (about the same)" in md
+    # Flat GBP/CHF/TRY: both moves are 0 -> still listed, labelled honestly.
+    assert "- GBP: **0.00%** over 1 gap vs. 0.00% over 1 weekday move (no movement)" in md
+
+
+def test_weekend_gap_all_covers_every_currency_with_both_kinds():
+    fx = [
+        {"date": "2026-10-01", "usd": 1.0, "gbp": 0.80, "chf": 0.90, "try": ""},
+        {"date": "2026-10-02", "usd": 1.0, "gbp": 0.808, "chf": 0.90, "try": 50.0},
+        {"date": "2026-10-05", "usd": 1.0, "gbp": 0.808, "chf": 0.909, "try": 50.5},
+    ]
+    res = report.weekend_gap_all(fx)
+    # TRY has no weekday pair (first value missing), so it is left out.
+    assert list(res) == ["usd", "gbp", "chf"]
+    g, gn, d, dn = res["gbp"]
+    assert (gn, dn) == (1, 1) and g == 0 and round(d, 2) == 1.00
+    g, gn, d, dn = res["chf"]
+    assert round(g, 2) == 1.00 and d == 0
+
+
+def test_gap_verdict_labels():
+    assert report._gap_verdict(1.0, 0.5) == "gaps larger"
+    assert report._gap_verdict(0.5, 1.0) == "gaps smaller"
+    assert report._gap_verdict(1.0, 1.1) == "about the same"
+    assert report._gap_verdict(0.3, 0) == "weekdays flat"
+    assert report._gap_verdict(0, 0) == "no movement"

@@ -309,6 +309,31 @@ def weekend_gap_moves(fx: list[dict], code: str = "usd") -> tuple[float, int, fl
     return mean(gaps), len(gaps), mean(daily), len(daily)
 
 
+def weekend_gap_all(fx: list[dict]) -> dict[str, tuple[float, int, float, int]]:
+    """``weekend_gap_moves`` for every tracked currency, in FX_CODES order.
+
+    Currencies without both a gap pair and a daily pair yet are left out.
+    """
+    out = {}
+    for code in FX_CODES:
+        res = weekend_gap_moves(fx, code)
+        if res is not None:
+            out[code] = res
+    return out
+
+
+def _gap_verdict(gap: float, daily: float) -> str:
+    """Short label comparing the mean gap move with the mean daily move."""
+    if daily == 0:
+        return "weekdays flat" if gap > 0 else "no movement"
+    ratio = gap / daily
+    if ratio >= 1.2:
+        return "gaps larger"
+    if ratio <= 1 / 1.2:
+        return "gaps smaller"
+    return "about the same"
+
+
 WEEKDAYS = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
 
@@ -510,14 +535,16 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
                 f"Longest calm USD stretch (no daily move above 0.5%): **{n} business days** ({first} → {last_day})",
                 "",
             ]
-        gap = weekend_gap_moves(fx)
-        if gap:
-            g, gn, d, dn = gap
-            lines += [
-                f"USD weekend gaps vs. weekdays (avg absolute move): **{g:.2f}%** over {gn} gap{'s' if gn != 1 else ''}"
-                f" vs. {d:.2f}% over {dn} weekday move{'s' if dn != 1 else ''}",
-                "",
-            ]
+        gaps = weekend_gap_all(fx)
+        if gaps:
+            lines += ["Weekend gaps vs. weekdays (avg absolute move):", ""]
+            for code, (g, gn, d, dn) in gaps.items():
+                lines.append(
+                    f"- {code.upper()}: **{g:.2f}%** over {gn} gap{'s' if gn != 1 else ''}"
+                    f" vs. {d:.2f}% over {dn} weekday move{'s' if dn != 1 else ''}"
+                    f" ({_gap_verdict(g, d)})"
+                )
+            lines.append("")
     return "\n".join(lines)
 
 
