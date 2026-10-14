@@ -40,6 +40,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Wednesday** (4.6 mm on average over 2 days)
 - Sunniest weekday so far: **Sunday** (10.9 h on average over 3 days)
+- Dry days by weekday: Mon 2/3 · Tue 1/3 · Wed 0/2 · Thu 0/2 · Fri 2/3 · Sat 2/3 · Sun 2/3
 - Rain vs. sunshine correlation: **r = -0.57**
 
 Last 7 days (Breda):
@@ -96,4 +97,6 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [ ] Count of frost nights per month once winter data comes in
 - [x] Average weekday rain: which day of the week is wettest so far
 - [x] Sunshine by weekday: which day of the week gets the most sun on average
-- [ ] Dry-day share per weekday (how often each day of the week stays at 0 mm)
+- [x] Dry-day share per weekday (how often each day of the week stays at 0 mm)
+- [ ] Cumulative change of each EUR rate since the first stored day
+- [ ] Average rain on wet days only (rain intensity, ignoring dry days)

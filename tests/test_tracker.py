@@ -546,3 +546,26 @@ def test_gap_verdict_labels():
     assert report._gap_verdict(1.0, 1.1) == "about the same"
     assert report._gap_verdict(0.3, 0) == "weekdays flat"
     assert report._gap_verdict(0, 0) == "no movement"
+
+
+def test_dry_share_by_weekday_counts_dry_days_in_calendar_order():
+    rows = [
+        {"date": "2026-10-07", "precip_mm": "0.0"},  # Wednesday, dry
+        {"date": "2026-10-05", "precip_mm": "0.0"},  # Monday, dry
+        {"date": "2026-10-12", "precip_mm": "1.2"},  # Monday, wet
+        {"date": "2026-10-06", "precip_mm": ""},  # Tuesday, missing -> left out
+    ]
+    assert report.dry_share_by_weekday(rows) == {"Monday": (1, 2), "Wednesday": (1, 1)}
+
+
+def test_dry_share_by_weekday_empty():
+    assert report.dry_share_by_weekday([]) == {}
+
+
+def test_stats_markdown_includes_dry_days_by_weekday():
+    rows = [
+        {"date": "2026-10-05", "temp_max_c": "15", "temp_min_c": "8", "precip_mm": "0.0", "sunshine_h": "4"},
+        {"date": "2026-10-06", "temp_max_c": "16", "temp_min_c": "9", "precip_mm": "2.5", "sunshine_h": "1"},
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Dry days by weekday: Mon 1/1 · Tue 0/1" in md

@@ -380,6 +380,25 @@ def sunniest_weekday(rows: list[dict]) -> tuple[str, float, int] | None:
     return WEEKDAYS[best_day], avg, len(by_weekday[best_day])
 
 
+def dry_share_by_weekday(rows: list[dict]) -> dict[str, tuple[int, int]]:
+    """How often each day of the week stayed dry, as {weekday: (dry days, days counted)}.
+
+    A day counts when it has a rain value; it is dry at exactly 0 mm. Keys
+    follow calendar order (Monday first) and weekdays with no stored rain
+    value are left out, so a missing Tuesday never shows up as 0/0.
+    """
+    counts: dict[int, list[int]] = {}
+    for r in rows:
+        mm = _value(r, "precip_mm")
+        if mm is None:
+            continue
+        c = counts.setdefault(date.fromisoformat(r["date"]).weekday(), [0, 0])
+        c[1] += 1
+        if mm == 0:
+            c[0] += 1
+    return {WEEKDAYS[d]: (counts[d][0], counts[d][1]) for d in sorted(counts)}
+
+
 def _streak_text(streak: tuple[int, str, str]) -> str:
     n, first, last = streak
     span = first if n == 1 else f"{first} → {last}"
@@ -496,6 +515,10 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         sd = sunniest_weekday(weather)
         if sd:
             lines.append(f"- Sunniest weekday so far: **{sd[0]}** ({sd[1]:.1f} h on average over {sd[2]} day{'s' if sd[2] != 1 else ''})")
+        dry = dry_share_by_weekday(weather)
+        if dry:
+            parts = " · ".join(f"{day[:3]} {d}/{n}" for day, (d, n) in dry.items())
+            lines.append(f"- Dry days by weekday: {parts}")
         r = rain_sun_correlation(weather)
         lines.append(
             f"- Rain vs. sunshine correlation: **r = {r:+.2f}**"
