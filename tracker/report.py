@@ -49,6 +49,24 @@ def fx_pct_changes(fx: list[dict]) -> dict[str, float]:
     return out
 
 
+def fx_since_start(fx: list[dict]) -> dict[str, tuple[str, float]]:
+    """Cumulative % change of each EUR rate from its first to its latest stored value.
+
+    Per currency, the first and last rows with a usable (non-missing,
+    non-zero) rate are compared, so a gap at the start of one series does not
+    hide the others. Returns {code: (first date used, signed % change)} in
+    FX_CODES order; currencies with fewer than two usable values are left out.
+    """
+    out: dict[str, tuple[str, float]] = {}
+    for code in FX_CODES:
+        usable = [(r["date"], v) for r in fx if (v := _value(r, code)) not in (None, 0)]
+        if len(usable) < 2:
+            continue
+        (first_day, a), (_, b) = usable[0], usable[-1]
+        out[code] = (first_day, (b - a) / a * 100)
+    return out
+
+
 def biggest_fx_move(fx: list[dict]) -> tuple[str, str, float] | None:
     """Largest absolute day-over-day % move across all tracked currencies.
 
@@ -547,6 +565,15 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         if changes:
             parts = " · ".join(f"{code.upper()} {pct:+.2f}%" for code, pct in changes.items())
             lines += [f"Change vs. {fx[-2]['date']}: {parts}", ""]
+        since = fx_since_start(fx)
+        if since:
+            starts = {day for day, _ in since.values()}
+            if len(starts) == 1:
+                parts = " · ".join(f"{code.upper()} {pct:+.2f}%" for code, (_, pct) in since.items())
+                lines += [f"Change since tracking started ({starts.pop()}): {parts}", ""]
+            else:
+                parts = " · ".join(f"{code.upper()} {pct:+.2f}% (from {day})" for code, (day, pct) in since.items())
+                lines += [f"Change since tracking started: {parts}", ""]
         move = biggest_fx_move(fx)
         if move:
             code, day, pct = move

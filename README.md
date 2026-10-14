@@ -59,6 +59,8 @@ Latest EUR rates (2026-10-13): USD 1.1188 · GBP 0.8446 · CHF 0.9312 · TRY 55.
 
 Change vs. 2026-10-12: USD +0.06% · GBP -0.02% · CHF +0.00% · TRY +0.13%
 
+Change since tracking started (2026-09-25): USD -1.89% · GBP -1.84% · CHF -1.41% · TRY -1.01%
+
 Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 
 Longest calm USD stretch (no daily move above 0.5%): **5 business days** (2026-10-07 → 2026-10-13)
@@ -98,5 +100,6 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Average weekday rain: which day of the week is wettest so far
 - [x] Sunshine by weekday: which day of the week gets the most sun on average
 - [x] Dry-day share per weekday (how often each day of the week stays at 0 mm)
-- [ ] Cumulative change of each EUR rate since the first stored day
+- [x] Cumulative change of each EUR rate since the first stored day
+- [ ] Best and worst week for each EUR rate (largest 5-business-day move)
 - [ ] Average rain on wet days only (rain intensity, ignoring dry days)

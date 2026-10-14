@@ -569,3 +569,40 @@ def test_stats_markdown_includes_dry_days_by_weekday():
     ]
     md = report.stats_markdown(rows, [])
     assert "- Dry days by weekday: Mon 1/1 · Tue 0/1" in md
+
+
+def test_fx_since_start_uses_first_and_last_usable_value_per_currency():
+    fx = [
+        {"date": "2026-10-01", "usd": "1.0", "gbp": "", "chf": "0", "try": "50"},
+        {"date": "2026-10-02", "usd": "1.1", "gbp": "0.80", "chf": "0.90", "try": ""},
+        {"date": "2026-10-05", "usd": "1.05", "gbp": "0.82", "chf": "", "try": ""},
+    ]
+    res = report.fx_since_start(fx)
+    # CHF has only one usable value (zero is skipped), TRY only one -> left out.
+    assert list(res) == ["usd", "gbp"]
+    assert res["usd"][0] == "2026-10-01" and round(res["usd"][1], 2) == 5.00
+    assert res["gbp"][0] == "2026-10-02" and round(res["gbp"][1], 2) == 2.50
+
+
+def test_fx_since_start_needs_two_rows():
+    assert report.fx_since_start([]) == {}
+    assert report.fx_since_start([{"date": "2026-10-01", "usd": "1.0", "gbp": "", "chf": "", "try": ""}]) == {}
+
+
+def test_stats_markdown_since_start_line_shares_start_date():
+    fx = [
+        {"date": "2026-10-01", "usd": "1.0", "gbp": "0.80", "chf": "0.90", "try": "50"},
+        {"date": "2026-10-02", "usd": "1.02", "gbp": "0.80", "chf": "0.90", "try": "51"},
+    ]
+    md = report.stats_markdown([], fx)
+    assert "Change since tracking started (2026-10-01): USD +2.00% · GBP +0.00% · CHF +0.00% · TRY +2.00%" in md
+
+
+def test_stats_markdown_since_start_line_lists_differing_start_dates():
+    fx = [
+        {"date": "2026-10-01", "usd": "1.0", "gbp": "", "chf": "", "try": ""},
+        {"date": "2026-10-02", "usd": "1.01", "gbp": "0.80", "chf": "", "try": ""},
+        {"date": "2026-10-05", "usd": "1.01", "gbp": "0.84", "chf": "", "try": ""},
+    ]
+    md = report.stats_markdown([], fx)
+    assert "Change since tracking started: USD +1.00% (from 2026-10-01) · GBP +5.00% (from 2026-10-02)" in md
