@@ -35,6 +35,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Largest day/night range: **13.4 °C** on 2026-09-25
 - Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **8.9 h/day**
 - Wettest day: **8.1 mm** on 2026-10-07
+- Rain intensity (wet days only): **2.9 mm/day** over 10 wet days
 - Rainiest week: **23.7 mm** (2026-10-07 → 2026-10-13)
 - Longest dry streak: **5 days** (2026-10-02 → 2026-10-06)
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
@@ -102,4 +103,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Dry-day share per weekday (how often each day of the week stays at 0 mm)
 - [x] Cumulative change of each EUR rate since the first stored day
 - [ ] Best and worst week for each EUR rate (largest 5-business-day move)
-- [ ] Average rain on wet days only (rain intensity, ignoring dry days)
+- [x] Average rain on wet days only (rain intensity, ignoring dry days)
+- [ ] Heaviest-rain share: what fraction of all rain fell on the single wettest day

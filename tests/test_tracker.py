@@ -606,3 +606,28 @@ def test_stats_markdown_since_start_line_lists_differing_start_dates():
     ]
     md = report.stats_markdown([], fx)
     assert "Change since tracking started: USD +1.00% (from 2026-10-01) · GBP +5.00% (from 2026-10-02)" in md
+
+
+def test_wet_day_intensity_ignores_dry_and_missing_days():
+    rows = [
+        {"date": "2026-10-01", "precip_mm": "0.0"},
+        {"date": "2026-10-02", "precip_mm": "3.0"},
+        {"date": "2026-10-03", "precip_mm": ""},
+        {"date": "2026-10-04", "precip_mm": "1.0"},
+        {"date": "2026-10-05", "precip_mm": "0"},
+    ]
+    assert report.wet_day_intensity(rows) == (2.0, 2)
+
+
+def test_wet_day_intensity_none_without_rain():
+    assert report.wet_day_intensity([]) is None
+    assert report.wet_day_intensity([{"date": "2026-10-01", "precip_mm": "0.0"}]) is None
+
+
+def test_stats_markdown_rain_intensity_line():
+    rows = [
+        {"date": "2026-10-05", "temp_max_c": "15", "temp_min_c": "8", "precip_mm": "4.5", "sunshine_h": "2"},
+        {"date": "2026-10-06", "temp_max_c": "16", "temp_min_c": "9", "precip_mm": "0.0", "sunshine_h": "8"},
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Rain intensity (wet days only): **4.5 mm/day** over 1 wet day" in md

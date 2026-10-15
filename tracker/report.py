@@ -232,6 +232,19 @@ def wettest_day(rows: list[dict]) -> tuple[str, float] | None:
     return best
 
 
+def wet_day_intensity(rows: list[dict]) -> tuple[float, int] | None:
+    """Average rain on wet days only, as (mean mm per wet day, wet days counted).
+
+    A wet day has more than 0 mm; dry days and rows without a rain value are
+    ignored, so a long dry spell does not dilute how heavy the rain is when
+    it does fall. Returns None until at least one wet day is stored.
+    """
+    wet = [mm for r in rows if (mm := _value(r, "precip_mm")) is not None and mm > 0]
+    if not wet:
+        return None
+    return mean(wet), len(wet)
+
+
 def rainiest_week(rows: list[dict], window: int = 7) -> tuple[str, str, float] | None:
     """Highest rain total over ``window`` consecutive calendar days, as (first, last, mm).
 
@@ -512,6 +525,11 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(f"- Sunniest day: **{sun[1]:.1f} h** on {sun[0]} · Average sunshine: **{sun[2]:.1f} h/day**")
         wet = wettest_day(weather)
         lines.append(f"- Wettest day: **{wet[1]:.1f} mm** on {wet[0]}" if wet else "- Wettest day: no rain recorded yet")
+        heavy = wet_day_intensity(weather)
+        if heavy:
+            lines.append(
+                f"- Rain intensity (wet days only): **{heavy[0]:.1f} mm/day** over {heavy[1]} wet day{'s' if heavy[1] != 1 else ''}"
+            )
         week = rainiest_week(weather)
         lines.append(
             f"- Rainiest week: **{week[2]:.1f} mm** ({week[0]} → {week[1]})"
