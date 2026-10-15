@@ -64,6 +64,13 @@ Change since tracking started (2026-09-25): USD -1.82% · GBP -1.93% · CHF -1.2
 
 Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 
+Best and worst 5-business-day move:
+
+- USD: best **+0.16%** (2026-10-07 → 2026-10-14) · worst **-1.57%** (2026-09-30 → 2026-10-07)
+- GBP: best **-0.29%** (2026-10-05 → 2026-10-12) · worst **-1.24%** (2026-09-28 → 2026-10-05)
+- CHF: best **+0.37%** (2026-10-02 → 2026-10-09) · worst **-1.78%** (2026-09-30 → 2026-10-07)
+- TRY: best **+0.56%** (2026-10-07 → 2026-10-14) · worst **-1.22%** (2026-09-30 → 2026-10-07)
+
 Longest calm USD stretch (no daily move above 0.5%): **6 business days** (2026-10-07 → 2026-10-14)
 
 Weekend gaps vs. weekdays (avg absolute move):
@@ -102,6 +109,7 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Sunshine by weekday: which day of the week gets the most sun on average
 - [x] Dry-day share per weekday (how often each day of the week stays at 0 mm)
 - [x] Cumulative change of each EUR rate since the first stored day
-- [ ] Best and worst week for each EUR rate (largest 5-business-day move)
+- [x] Best and worst week for each EUR rate (largest 5-business-day move)
+- [ ] Realised volatility per EUR rate (standard deviation of daily % moves)
 - [x] Average rain on wet days only (rain intensity, ignoring dry days)
 - [ ] Heaviest-rain share: what fraction of all rain fell on the single wettest day

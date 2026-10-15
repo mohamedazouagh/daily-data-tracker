@@ -631,3 +631,29 @@ def test_stats_markdown_rain_intensity_line():
     ]
     md = report.stats_markdown(rows, [])
     assert "- Rain intensity (wet days only): **4.5 mm/day** over 1 wet day" in md
+
+
+def _fx_rows(usd_values, start=date(2026, 10, 1)):
+    return [
+        {"date": (start + timedelta(days=i)).isoformat(), "usd": "" if v is None else str(v), "gbp": "", "chf": "", "try": ""}
+        for i, v in enumerate(usd_values)
+    ]
+
+
+def test_fx_best_worst_week_compares_rows_five_apart():
+    fx = _fx_rows([1.00, 1.00, 1.10, 1.00, 1.00, 1.05, 0.99])
+    res = report.fx_best_worst_week(fx)
+    assert list(res) == ["usd"]
+    (b1, b2, bp), (w1, w2, wp) = res["usd"]
+    assert (b1, b2, round(bp, 2)) == ("2026-10-01", "2026-10-06", 5.00)
+    assert (w1, w2, round(wp, 2)) == ("2026-10-02", "2026-10-07", -1.00)
+
+
+def test_fx_best_worst_week_skips_missing_endpoints_and_short_history():
+    assert report.fx_best_worst_week(_fx_rows([1.0, 1.0, 1.0, 1.0, 1.0])) == {}
+    assert report.fx_best_worst_week(_fx_rows([None, 1.0, 1.0, 1.0, 1.0, 1.2])) == {}
+
+
+def test_stats_markdown_best_worst_week_lines():
+    md = report.stats_markdown([], _fx_rows([1.00, 1.00, 1.10, 1.00, 1.00, 1.05, 0.99]))
+    assert "- USD: best **+5.00%** (2026-10-01 → 2026-10-06) · worst **-1.00%** (2026-10-02 → 2026-10-07)" in md

@@ -67,6 +67,34 @@ def fx_since_start(fx: list[dict]) -> dict[str, tuple[str, float]]:
     return out
 
 
+def fx_best_worst_week(
+    fx: list[dict], days: int = 5
+) -> dict[str, tuple[tuple[str, str, float], tuple[str, str, float]]]:
+    """Best and worst ``days``-business-day move of each EUR rate.
+
+    Each stored row is compared with the row ``days`` positions later (stored
+    rows are business days, so 5 rows ahead is one trading week). Windows
+    with a missing or zero rate at either end are skipped. Returns
+    {code: ((first, last, highest %), (first, last, lowest %))} in FX_CODES
+    order; the earliest window wins ties and currencies without a full
+    window are left out. With only rises (or only falls) both entries can
+    have the same sign.
+    """
+    out = {}
+    for code in FX_CODES:
+        moves = []
+        for start, end in zip(fx, fx[days:]):
+            a, b = _value(start, code), _value(end, code)
+            if a in (None, 0) or b is None:
+                continue
+            moves.append((start["date"], end["date"], (b - a) / a * 100))
+        if moves:
+            best = max(moves, key=lambda m: m[2])
+            worst = min(moves, key=lambda m: m[2])
+            out[code] = (best, worst)
+    return out
+
+
 def biggest_fx_move(fx: list[dict]) -> tuple[str, str, float] | None:
     """Largest absolute day-over-day % move across all tracked currencies.
 
@@ -596,6 +624,12 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         if move:
             code, day, pct = move
             lines += [f"Biggest single-day move since tracking started: {code.upper()} {pct:+.2f}% on {day}", ""]
+        weeks = fx_best_worst_week(fx)
+        if weeks:
+            lines += ["Best and worst 5-business-day move:", ""]
+            for code, ((b1, b2, bp), (w1, w2, wp)) in weeks.items():
+                lines.append(f"- {code.upper()}: best **{bp:+.2f}%** ({b1} → {b2}) · worst **{wp:+.2f}%** ({w1} → {w2})")
+            lines.append("")
         calm = calmest_fx_stretch(fx)
         if calm:
             n, first, last_day = calm
