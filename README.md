@@ -72,6 +72,8 @@ Best and worst 5-business-day move:
 - CHF: best **+0.37%** (2026-10-02 → 2026-10-09) · worst **-1.78%** (2026-09-30 → 2026-10-07)
 - TRY: best **+0.61%** (2026-10-08 → 2026-10-15) · worst **-1.22%** (2026-09-30 → 2026-10-07)
 
+Realised volatility (std. dev. of daily moves, 14 moves): USD 0.36% · GBP 0.22% · CHF 0.54% · TRY 0.34%
+
 Longest calm USD stretch (no daily move above 0.5%): **7 business days** (2026-10-07 → 2026-10-15)
 
 Weekend gaps vs. weekdays (avg absolute move):
@@ -111,7 +113,8 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Dry-day share per weekday (how often each day of the week stays at 0 mm)
 - [x] Cumulative change of each EUR rate since the first stored day
 - [x] Best and worst week for each EUR rate (largest 5-business-day move)
-- [ ] Realised volatility per EUR rate (standard deviation of daily % moves)
+- [x] Realised volatility per EUR rate (standard deviation of daily % moves)
+- [ ] Rolling 10-day volatility per EUR rate to see whether markets are calming down
 - [x] Average rain on wet days only (rain intensity, ignoring dry days)
 - [x] Heaviest-rain share: what fraction of all rain fell on the single wettest day
 - [ ] Share of rain from the 3 wettest days (how concentrated rainfall is overall)

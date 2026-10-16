@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
-from statistics import correlation, mean
+from statistics import correlation, mean, stdev
 
 
 def _floats(rows: list[dict], key: str) -> list[float]:
@@ -92,6 +92,28 @@ def fx_best_worst_week(
             best = max(moves, key=lambda m: m[2])
             worst = min(moves, key=lambda m: m[2])
             out[code] = (best, worst)
+    return out
+
+
+def fx_volatility(fx: list[dict]) -> dict[str, tuple[float, int]]:
+    """Realised volatility of each EUR rate: sample standard deviation of daily % moves.
+
+    Every pair of consecutive stored rows (business days, so weekend gaps
+    count as one move) with usable rates gives one move; pairs with a
+    missing or zero rate are skipped. Returns {code: (stdev %, moves used)}
+    in FX_CODES order; currencies with fewer than two moves are left out
+    because a standard deviation needs at least two values.
+    """
+    out = {}
+    for code in FX_CODES:
+        moves = []
+        for prev, cur in zip(fx, fx[1:]):
+            a, b = _value(prev, code), _value(cur, code)
+            if a in (None, 0) or b is None:
+                continue
+            moves.append((b - a) / a * 100)
+        if len(moves) >= 2:
+            out[code] = (stdev(moves), len(moves))
     return out
 
 
@@ -647,6 +669,11 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             for code, ((b1, b2, bp), (w1, w2, wp)) in weeks.items():
                 lines.append(f"- {code.upper()}: best **{bp:+.2f}%** ({b1} → {b2}) · worst **{wp:+.2f}%** ({w1} → {w2})")
             lines.append("")
+        vol = fx_volatility(fx)
+        if vol:
+            parts = " · ".join(f"{code.upper()} {sd:.2f}%" for code, (sd, _) in vol.items())
+            n_moves = max(n for _, n in vol.values())
+            lines += [f"Realised volatility (std. dev. of daily moves, {n_moves} moves): {parts}", ""]
         calm = calmest_fx_stretch(fx)
         if calm:
             n, first, last_day = calm

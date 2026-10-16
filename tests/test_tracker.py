@@ -681,3 +681,22 @@ def test_heaviest_rain_share_none_without_rain_and_earliest_tie():
 def test_stats_markdown_heaviest_rain_share_line():
     md = report.stats_markdown(_daily_rain([1.0, 3.0]), [])
     assert "- Wettest day's share of all rain: **75%** (3.0 mm on 2026-10-02)" in md
+
+
+def test_fx_volatility_is_sample_stdev_of_daily_moves():
+    # moves: +1%, -1%, +1% -> sample stdev = sqrt(4/3) ~ 1.1547
+    fx = _fx_rows([100.0, 101.0, 99.99, 100.9899])
+    sd, n = report.fx_volatility(fx)["usd"]
+    assert n == 3
+    assert round(sd, 4) == 1.1547
+
+
+def test_fx_volatility_skips_gaps_and_needs_two_moves():
+    assert report.fx_volatility(_fx_rows([1.0, 1.1])) == {}
+    assert report.fx_volatility(_fx_rows([1.0, None, 1.0, 1.0])) == {}
+    assert report.fx_volatility(_fx_rows([1.0, 1.0, 1.0]))["usd"] == (0.0, 2)
+
+
+def test_stats_markdown_volatility_line():
+    md = report.stats_markdown([], _fx_rows([100.0, 101.0, 99.99, 100.9899]))
+    assert "Realised volatility (std. dev. of daily moves, 3 moves): USD 1.15%" in md
