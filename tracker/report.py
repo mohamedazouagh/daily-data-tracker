@@ -273,6 +273,20 @@ def wet_day_intensity(rows: list[dict]) -> tuple[float, int] | None:
     return mean(wet), len(wet)
 
 
+def heaviest_rain_share(rows: list[dict]) -> tuple[str, float, float] | None:
+    """Share of all stored rain that fell on the single wettest day.
+
+    Returns (date of the wettest day, its mm, % of the total rain). Rows
+    without a rain value are skipped; the earliest date wins ties. Returns
+    None while no rain has been recorded (a share of 0 mm is undefined).
+    """
+    wet = wettest_day(rows)
+    if wet is None:
+        return None
+    total = sum(mm for r in rows if (mm := _value(r, "precip_mm")) is not None)
+    return wet[0], wet[1], wet[1] / total * 100
+
+
 def rainiest_week(rows: list[dict], window: int = 7) -> tuple[str, str, float] | None:
     """Highest rain total over ``window`` consecutive calendar days, as (first, last, mm).
 
@@ -553,6 +567,9 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(f"- Sunniest day: **{sun[1]:.1f} h** on {sun[0]} · Average sunshine: **{sun[2]:.1f} h/day**")
         wet = wettest_day(weather)
         lines.append(f"- Wettest day: **{wet[1]:.1f} mm** on {wet[0]}" if wet else "- Wettest day: no rain recorded yet")
+        share = heaviest_rain_share(weather)
+        if share:
+            lines.append(f"- Wettest day's share of all rain: **{share[2]:.0f}%** ({share[1]:.1f} mm on {share[0]})")
         heavy = wet_day_intensity(weather)
         if heavy:
             lines.append(

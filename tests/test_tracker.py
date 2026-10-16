@@ -657,3 +657,27 @@ def test_fx_best_worst_week_skips_missing_endpoints_and_short_history():
 def test_stats_markdown_best_worst_week_lines():
     md = report.stats_markdown([], _fx_rows([1.00, 1.00, 1.10, 1.00, 1.00, 1.05, 0.99]))
     assert "- USD: best **+5.00%** (2026-10-01 → 2026-10-06) · worst **-1.00%** (2026-10-02 → 2026-10-07)" in md
+
+
+def _daily_rain(values, start=date(2026, 10, 1)):
+    return [
+        {"date": (start + timedelta(days=i)).isoformat(), "temp_max_c": "15", "temp_min_c": "8",
+         "precip_mm": "" if v is None else str(v), "sunshine_h": "5"}
+        for i, v in enumerate(values)
+    ]
+
+
+def test_heaviest_rain_share_uses_total_of_all_days():
+    day, mm, pct = report.heaviest_rain_share(_daily_rain([0.0, 6.0, 2.0, None, 2.0]))
+    assert (day, mm, round(pct, 1)) == ("2026-10-02", 6.0, 60.0)
+
+
+def test_heaviest_rain_share_none_without_rain_and_earliest_tie():
+    assert report.heaviest_rain_share(_daily_rain([0.0, 0.0])) is None
+    assert report.heaviest_rain_share([]) is None
+    assert report.heaviest_rain_share(_daily_rain([3.0, 3.0]))[0] == "2026-10-01"
+
+
+def test_stats_markdown_heaviest_rain_share_line():
+    md = report.stats_markdown(_daily_rain([1.0, 3.0]), [])
+    assert "- Wettest day's share of all rain: **75%** (3.0 mm on 2026-10-02)" in md
