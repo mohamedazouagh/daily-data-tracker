@@ -117,6 +117,44 @@ def fx_volatility(fx: list[dict]) -> dict[str, tuple[float, int]]:
     return out
 
 
+def fx_rolling_volatility(fx: list[dict], window: int = 10) -> dict[str, tuple[float, float]]:
+    """Volatility of the first vs. the latest ``window`` daily moves of each EUR rate.
+
+    Moves are built like in ``fx_volatility`` (consecutive stored rows,
+    pairs with a missing or zero rate skipped). The sample standard
+    deviation of the earliest ``window`` moves is compared with that of the
+    most recent ``window`` moves, which shows whether a currency is calming
+    down or getting choppier. Returns {code: (first window %, latest window %)}
+    in FX_CODES order; currencies need more than ``window`` moves so the two
+    windows differ, otherwise they are left out.
+    """
+    if window < 2:
+        raise ValueError("window must be >= 2")
+    out = {}
+    for code in FX_CODES:
+        moves = []
+        for prev, cur in zip(fx, fx[1:]):
+            a, b = _value(prev, code), _value(cur, code)
+            if a in (None, 0) or b is None:
+                continue
+            moves.append((b - a) / a * 100)
+        if len(moves) > window:
+            out[code] = (stdev(moves[:window]), stdev(moves[-window:]))
+    return out
+
+
+def _vol_trend(first: float, latest: float) -> str:
+    """Label for a volatility change; within ±10% counts as steady."""
+    if first == 0:
+        return "steady" if latest == 0 else "choppier"
+    ratio = latest / first
+    if ratio <= 0.9:
+        return "calmer"
+    if ratio >= 1.1:
+        return "choppier"
+    return "steady"
+
+
 def biggest_fx_move(fx: list[dict]) -> tuple[str, str, float] | None:
     """Largest absolute day-over-day % move across all tracked currencies.
 
@@ -696,6 +734,12 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             parts = " · ".join(f"{code.upper()} {sd:.2f}%" for code, (sd, _) in vol.items())
             n_moves = max(n for _, n in vol.values())
             lines += [f"Realised volatility (std. dev. of daily moves, {n_moves} moves): {parts}", ""]
+        roll = fx_rolling_volatility(fx)
+        if roll:
+            parts = " · ".join(
+                f"{code.upper()} {a:.2f}% → {b:.2f}% ({_vol_trend(a, b)})" for code, (a, b) in roll.items()
+            )
+            lines += [f"10-move volatility, first window → latest: {parts}", ""]
         calm = calmest_fx_stretch(fx)
         if calm:
             n, first, last_day = calm

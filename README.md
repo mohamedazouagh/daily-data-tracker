@@ -75,6 +75,8 @@ Best and worst 5-business-day move:
 
 Realised volatility (std. dev. of daily moves, 15 moves): USD 0.37% · GBP 0.21% · CHF 0.52% · TRY 0.37%
 
+10-move volatility, first window → latest: USD 0.41% → 0.38% (steady) · GBP 0.21% → 0.23% (steady) · CHF 0.63% → 0.33% (calmer) · TRY 0.39% → 0.40% (steady)
+
 Longest calm USD stretch (no daily move above 0.5%): **8 business days** (2026-10-07 → 2026-10-16)
 
 Weekend gaps vs. weekdays (avg absolute move):
@@ -115,7 +117,8 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Cumulative change of each EUR rate since the first stored day
 - [x] Best and worst week for each EUR rate (largest 5-business-day move)
 - [x] Realised volatility per EUR rate (standard deviation of daily % moves)
-- [ ] Rolling 10-day volatility per EUR rate to see whether markets are calming down
+- [x] Rolling 10-day volatility per EUR rate to see whether markets are calming down
+- [ ] Volatility ranking: which currency has been the calmest over the latest 10 moves
 - [x] Average rain on wet days only (rain intensity, ignoring dry days)
 - [x] Heaviest-rain share: what fraction of all rain fell on the single wettest day
 - [x] Share of rain from the 3 wettest days (how concentrated rainfall is overall)

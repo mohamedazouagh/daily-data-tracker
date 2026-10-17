@@ -720,3 +720,35 @@ def test_stats_markdown_top3_rain_line_only_with_three_wet_days():
     md = report.stats_markdown(_daily_rain([1.0, 3.0, 0.0, 4.0, 2.0]), [])
     assert "- Share of rain from the 3 wettest days: **90%** (2026-10-04 4.0 mm, 2026-10-02 3.0 mm, 2026-10-05 2.0 mm)" in md
     assert "3 wettest days" not in report.stats_markdown(_daily_rain([1.0, 3.0]), [])
+
+
+def _fx_from_moves(pcts, start=100.0):
+    values = [start]
+    for p in pcts:
+        values.append(values[-1] * (1 + p / 100))
+    return _fx_rows(values)
+
+
+def test_fx_rolling_volatility_compares_first_and_latest_window():
+    # first 3 moves swing +-2%, latest 3 moves swing +-1%
+    fx = _fx_from_moves([2, -2, 2, -1, 1, -1])
+    first, latest = report.fx_rolling_volatility(fx, window=3)["usd"]
+    assert round(first, 4) == round(report.stdev([2, -2, 2]), 4)
+    assert round(latest, 4) == round(report.stdev([-1, 1, -1]), 4)
+
+
+def test_fx_rolling_volatility_needs_more_moves_than_window():
+    assert report.fx_rolling_volatility(_fx_from_moves([1, -1, 1]), window=3) == {}
+    assert "usd" in report.fx_rolling_volatility(_fx_from_moves([1, -1, 1, 1]), window=3)
+
+
+def test_vol_trend_labels():
+    assert report._vol_trend(1.0, 0.5) == "calmer"
+    assert report._vol_trend(1.0, 1.05) == "steady"
+    assert report._vol_trend(1.0, 1.5) == "choppier"
+    assert report._vol_trend(0.0, 0.0) == "steady"
+
+
+def test_stats_markdown_rolling_volatility_line():
+    md = report.stats_markdown([], _fx_from_moves([2, -2] * 5 + [0.5, -0.5] * 5))
+    assert "10-move volatility, first window → latest: USD 2.11% → 0.53% (calmer)" in md
