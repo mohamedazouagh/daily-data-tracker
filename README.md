@@ -36,6 +36,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **8.8 h/day**
 - Wettest day: **8.1 mm** on 2026-10-07
 - Wettest day's share of all rain: **24%** (8.1 mm on 2026-10-07)
+- Share of rain from the 3 wettest days: **60%** (2026-10-07 8.1 mm, 2026-10-09 7.6 mm, 2026-10-10 4.4 mm)
 - Rain intensity (wet days only): **3.0 mm/day** over 11 wet days
 - Rainiest week: **23.7 mm** (2026-10-07 → 2026-10-13)
 - Longest dry streak: **5 days** (2026-10-02 → 2026-10-06)
@@ -117,4 +118,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [ ] Rolling 10-day volatility per EUR rate to see whether markets are calming down
 - [x] Average rain on wet days only (rain intensity, ignoring dry days)
 - [x] Heaviest-rain share: what fraction of all rain fell on the single wettest day
-- [ ] Share of rain from the 3 wettest days (how concentrated rainfall is overall)
+- [x] Share of rain from the 3 wettest days (how concentrated rainfall is overall)
+- [ ] Weekend vs. weekday rain: average mm on Saturdays/Sundays against Monday–Friday

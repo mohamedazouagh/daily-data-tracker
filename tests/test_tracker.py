@@ -700,3 +700,23 @@ def test_fx_volatility_skips_gaps_and_needs_two_moves():
 def test_stats_markdown_volatility_line():
     md = report.stats_markdown([], _fx_rows([100.0, 101.0, 99.99, 100.9899]))
     assert "Realised volatility (std. dev. of daily moves, 3 moves): USD 1.15%" in md
+
+
+def test_top_rain_days_share_sums_three_wettest():
+    top, pct = report.top_rain_days_share(_daily_rain([1.0, 4.0, 0.0, 2.0, None, 3.0]))
+    assert top == [("2026-10-02", 4.0), ("2026-10-06", 3.0), ("2026-10-04", 2.0)]
+    assert round(pct, 1) == 90.0
+
+
+def test_top_rain_days_share_edge_cases():
+    assert report.top_rain_days_share(_daily_rain([0.0, 0.0])) is None
+    top, pct = report.top_rain_days_share(_daily_rain([2.0, 0.0]))
+    assert top == [("2026-10-01", 2.0)] and pct == 100.0
+    top, _ = report.top_rain_days_share(_daily_rain([1.0, 1.0, 1.0, 1.0]), n=2)
+    assert [d for d, _ in top] == ["2026-10-01", "2026-10-02"]
+
+
+def test_stats_markdown_top3_rain_line_only_with_three_wet_days():
+    md = report.stats_markdown(_daily_rain([1.0, 3.0, 0.0, 4.0, 2.0]), [])
+    assert "- Share of rain from the 3 wettest days: **90%** (2026-10-04 4.0 mm, 2026-10-02 3.0 mm, 2026-10-05 2.0 mm)" in md
+    assert "3 wettest days" not in report.stats_markdown(_daily_rain([1.0, 3.0]), [])
