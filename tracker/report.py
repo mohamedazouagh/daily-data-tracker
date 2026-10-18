@@ -143,6 +143,29 @@ def fx_rolling_volatility(fx: list[dict], window: int = 10) -> dict[str, tuple[f
     return out
 
 
+def fx_volatility_ranking(fx: list[dict], window: int = 10) -> list[tuple[str, float]]:
+    """EUR rates ranked from calmest to choppiest over their latest ``window`` daily moves.
+
+    Moves are built like in ``fx_volatility``. Each currency needs at least
+    ``window`` usable moves; the rest are left out so a short series never
+    looks artificially calm. Returns [(code, stdev %), ...] calmest first;
+    ties keep FX_CODES order.
+    """
+    if window < 2:
+        raise ValueError("window must be >= 2")
+    ranked = []
+    for code in FX_CODES:
+        moves = []
+        for prev, cur in zip(fx, fx[1:]):
+            a, b = _value(prev, code), _value(cur, code)
+            if a in (None, 0) or b is None:
+                continue
+            moves.append((b - a) / a * 100)
+        if len(moves) >= window:
+            ranked.append((code, stdev(moves[-window:])))
+    return sorted(ranked, key=lambda c: c[1])
+
+
 def _vol_trend(first: float, latest: float) -> str:
     """Label for a volatility change; within ±10% counts as steady."""
     if first == 0:
@@ -740,6 +763,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
                 f"{code.upper()} {a:.2f}% → {b:.2f}% ({_vol_trend(a, b)})" for code, (a, b) in roll.items()
             )
             lines += [f"10-move volatility, first window → latest: {parts}", ""]
+        ranking = fx_volatility_ranking(fx)
+        if len(ranking) >= 2:
+            parts = " < ".join(f"{code.upper()} {sd:.2f}%" for code, sd in ranking)
+            lines += [
+                f"Calmest → choppiest over the latest 10 moves: {parts} (calmest: **{ranking[0][0].upper()}**)",
+                "",
+            ]
         calm = calmest_fx_stretch(fx)
         if calm:
             n, first, last_day = calm

@@ -752,3 +752,49 @@ def test_vol_trend_labels():
 def test_stats_markdown_rolling_volatility_line():
     md = report.stats_markdown([], _fx_from_moves([2, -2] * 5 + [0.5, -0.5] * 5))
     assert "10-move volatility, first window → latest: USD 2.11% → 0.53% (calmer)" in md
+
+
+def _fx_multi(series, start=date(2026, 10, 1)):
+    """Rows with several currencies; ``series`` maps code -> list of values (same length)."""
+    n = len(next(iter(series.values())))
+    return [
+        {"date": (start + timedelta(days=i)).isoformat(),
+         **{c: (str(series[c][i]) if c in series and series[c][i] is not None else "") for c in report.FX_CODES}}
+        for i in range(n)
+    ]
+
+
+def _path(pcts, start=100.0):
+    values = [start]
+    for p in pcts:
+        values.append(values[-1] * (1 + p / 100))
+    return values
+
+
+def test_fx_volatility_ranking_orders_calmest_first():
+    fx = _fx_multi({"usd": _path([1, -1] * 3), "gbp": _path([0.1, -0.1] * 3), "chf": _path([3, -3] * 3)})
+    ranking = report.fx_volatility_ranking(fx, window=4)
+    assert [c for c, _ in ranking] == ["gbp", "usd", "chf"]
+    assert round(ranking[0][1], 4) == round(report.stdev([0.1, -0.1, 0.1, -0.1]), 4)
+
+
+def test_fx_volatility_ranking_uses_only_latest_window_and_skips_short_series():
+    # usd was wild early but calm lately; try has too few moves to be ranked
+    fx = _fx_multi({"usd": _path([5, -5, 0.1, -0.1, 0.1]), "gbp": _path([1, -1, 1, -1, 1]),
+                    "try": [None, None, None, 1.0, 1.01, 1.0]})
+    ranking = report.fx_volatility_ranking(fx, window=3)
+    assert [c for c, _ in ranking] == ["usd", "gbp"]
+
+
+def test_fx_volatility_ranking_rejects_tiny_window():
+    import pytest
+
+    with pytest.raises(ValueError):
+        report.fx_volatility_ranking([], window=1)
+
+
+def test_stats_markdown_volatility_ranking_line_needs_two_currencies():
+    fx = _fx_multi({"usd": _path([1, -1] * 5), "gbp": _path([0.5, -0.5] * 5)})
+    md = report.stats_markdown([], fx)
+    assert "Calmest → choppiest over the latest 10 moves: GBP 0.53% < USD 1.05% (calmest: **GBP**)" in md
+    assert "Calmest" not in report.stats_markdown([], _fx_from_moves([1, -1] * 5))
