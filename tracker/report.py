@@ -554,6 +554,25 @@ def sunniest_weekday(rows: list[dict]) -> tuple[str, float, int] | None:
     return WEEKDAYS[best_day], avg, len(by_weekday[best_day])
 
 
+def weekend_vs_weekday_rain(rows: list[dict]) -> tuple[float, int, float, int] | None:
+    """Average rain on Saturdays/Sundays vs. Monday–Friday.
+
+    Every stored day with a rain value counts, dry days included. Returns
+    (weekend mean mm, weekend days, weekday mean mm, weekday days), or None
+    until both groups have at least one day.
+    """
+    weekend: list[float] = []
+    weekday: list[float] = []
+    for r in rows:
+        mm = _value(r, "precip_mm")
+        if mm is None:
+            continue
+        (weekend if date.fromisoformat(r["date"]).weekday() >= 5 else weekday).append(mm)
+    if not weekend or not weekday:
+        return None
+    return mean(weekend), len(weekend), mean(weekday), len(weekday)
+
+
 def dry_share_by_weekday(rows: list[dict]) -> dict[str, tuple[int, int]]:
     """How often each day of the week stayed dry, as {weekday: (dry days, days counted)}.
 
@@ -705,6 +724,12 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         if dry:
             parts = " · ".join(f"{day[:3]} {d}/{n}" for day, (d, n) in dry.items())
             lines.append(f"- Dry days by weekday: {parts}")
+        wk = weekend_vs_weekday_rain(weather)
+        if wk:
+            lines.append(
+                f"- Weekend vs. weekday rain: **{wk[0]:.1f} mm/day** over {wk[1]} weekend day{'s' if wk[1] != 1 else ''}"
+                f" vs. {wk[2]:.1f} mm/day over {wk[3]} weekday{'s' if wk[3] != 1 else ''}"
+            )
         r = rain_sun_correlation(weather)
         lines.append(
             f"- Rain vs. sunshine correlation: **r = {r:+.2f}**"

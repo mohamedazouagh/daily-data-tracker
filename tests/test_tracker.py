@@ -798,3 +798,21 @@ def test_stats_markdown_volatility_ranking_line_needs_two_currencies():
     md = report.stats_markdown([], fx)
     assert "Calmest → choppiest over the latest 10 moves: GBP 0.53% < USD 1.05% (calmest: **GBP**)" in md
     assert "Calmest" not in report.stats_markdown([], _fx_from_moves([1, -1] * 5))
+
+
+def test_weekend_vs_weekday_rain_splits_saturday_sunday():
+    # 2026-10-01 is a Thursday: Thu, Fri, Sat, Sun, Mon
+    rows = _daily_rain([1.0, 3.0, 4.0, 0.0, 2.0])
+    we, wen, wd, wdn = report.weekend_vs_weekday_rain(rows)
+    assert (we, wen, wd, wdn) == (2.0, 2, 2.0, 3)
+
+
+def test_weekend_vs_weekday_rain_skips_missing_and_needs_both_groups():
+    rows = _daily_rain([1.0, None, 5.0, 1.0])  # Thu, Fri (missing), Sat, Sun
+    assert report.weekend_vs_weekday_rain(rows) == (3.0, 2, 1.0, 1)
+    assert report.weekend_vs_weekday_rain(_daily_rain([1.0, 2.0])) is None  # Thu + Fri only
+
+
+def test_stats_markdown_weekend_rain_line():
+    md = report.stats_markdown(_daily_rain([1.0, 3.0, 4.0, 0.0, 2.0]), [])
+    assert "- Weekend vs. weekday rain: **2.0 mm/day** over 2 weekend days vs. 2.0 mm/day over 3 weekdays" in md
