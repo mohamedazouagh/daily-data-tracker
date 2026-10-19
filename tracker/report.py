@@ -233,6 +233,32 @@ def longest_dry_streak(rows: list[dict]) -> tuple[int, str, str] | None:
     return _longest_run(rows, lambda r: _value(r, "precip_mm") == 0)
 
 
+def current_rain_run(rows: list[dict]) -> tuple[str, int, str] | None:
+    """The ongoing dry or wet run up to the latest stored day.
+
+    Returns ("dry" or "wet", days in a row, first day of the run). A day is
+    dry at exactly 0 mm. The run counts back from the newest day and stops at
+    the first day of the other kind, a missing rain value or a gap in the
+    stored dates. Returns None when the newest day has no rain value.
+    """
+    ordered = sorted(rows, key=lambda r: r["date"])
+    if not ordered:
+        return None
+    latest = _value(ordered[-1], "precip_mm")
+    if latest is None:
+        return None
+    kind = "dry" if latest == 0 else "wet"
+    n, start = 0, ordered[-1]["date"]
+    expected = date.fromisoformat(start)
+    for r in reversed(ordered):
+        mm = _value(r, "precip_mm")
+        if date.fromisoformat(r["date"]) != expected or mm is None or (mm == 0) != (kind == "dry"):
+            break
+        n, start = n + 1, r["date"]
+        expected -= timedelta(days=1)
+    return kind, n, start
+
+
 WARM_THRESHOLD_C = 20.0
 
 
@@ -722,6 +748,11 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         streak = longest_dry_streak(weather)
         if streak:
             lines.append(f"- Longest dry streak: {_streak_text(streak)}")
+        run = current_rain_run(weather)
+        if run:
+            kind, n, first = run
+            since = "" if n == 1 else f" since {first}"
+            lines.append(f"- Current run: **{n} {kind} day{'s' if n != 1 else ''} in a row**{since}")
         warm = longest_warm_streak(weather)
         lines.append(
             f"- Longest warm streak (max > {WARM_THRESHOLD_C:.0f} °C): {_streak_text(warm)}"

@@ -835,3 +835,25 @@ def test_weekend_vs_weekday_sunshine_skips_missing_and_needs_both_groups():
 def test_stats_markdown_weekend_sunshine_line():
     md = report.stats_markdown(_daily_rain([1.0, 3.0, 4.0, 0.0, 2.0]), [])
     assert "- Weekend vs. weekday sunshine: **5.0 h/day** over 2 weekend days vs. 5.0 h/day over 3 weekdays" in md
+
+
+def test_current_rain_run_counts_back_from_latest_day():
+    assert report.current_rain_run(_daily_rain([0.0, 0.0, 1.2, 0.4, 3.0])) == ("wet", 3, "2026-10-03")
+    assert report.current_rain_run(_daily_rain([2.0, 0.0, 0.0])) == ("dry", 2, "2026-10-02")
+    assert report.current_rain_run(_daily_rain([0.0, 0.0, 5.0])) == ("wet", 1, "2026-10-03")
+
+
+def test_current_rain_run_stops_at_gap_or_missing_value():
+    rows = _daily_rain([0.0, 0.0, 0.0, 0.0])
+    del rows[1]  # 2026-10-02 missing: run is 10-03 and 10-04 only
+    assert report.current_rain_run(rows) == ("dry", 2, "2026-10-03")
+    assert report.current_rain_run(_daily_rain([1.0, None, 2.0])) == ("wet", 1, "2026-10-03")
+    assert report.current_rain_run(_daily_rain([1.0, None])) is None
+    assert report.current_rain_run([]) is None
+
+
+def test_stats_markdown_current_run_line():
+    md = report.stats_markdown(_daily_rain([0.0, 1.0, 2.5]), [])
+    assert "- Current run: **2 wet days in a row** since 2026-10-02" in md
+    md = report.stats_markdown(_daily_rain([1.0, 0.0]), [])
+    assert "- Current run: **1 dry day in a row**\n" in md + "\n"
