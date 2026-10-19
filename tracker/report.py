@@ -561,13 +561,27 @@ def weekend_vs_weekday_rain(rows: list[dict]) -> tuple[float, int, float, int] |
     (weekend mean mm, weekend days, weekday mean mm, weekday days), or None
     until both groups have at least one day.
     """
+    return _weekend_split(rows, "precip_mm")
+
+
+def weekend_vs_weekday_sunshine(rows: list[dict]) -> tuple[float, int, float, int] | None:
+    """Average sunshine hours on Saturdays/Sundays vs. Monday–Friday.
+
+    Every stored day with a sunshine value counts, overcast days (0 h)
+    included. Returns (weekend mean h, weekend days, weekday mean h, weekday
+    days), or None until both groups have at least one day.
+    """
+    return _weekend_split(rows, "sunshine_h")
+
+
+def _weekend_split(rows: list[dict], key: str) -> tuple[float, int, float, int] | None:
     weekend: list[float] = []
     weekday: list[float] = []
     for r in rows:
-        mm = _value(r, "precip_mm")
-        if mm is None:
+        v = _value(r, key)
+        if v is None:
             continue
-        (weekend if date.fromisoformat(r["date"]).weekday() >= 5 else weekday).append(mm)
+        (weekend if date.fromisoformat(r["date"]).weekday() >= 5 else weekday).append(v)
     if not weekend or not weekday:
         return None
     return mean(weekend), len(weekend), mean(weekday), len(weekday)
@@ -729,6 +743,12 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(
                 f"- Weekend vs. weekday rain: **{wk[0]:.1f} mm/day** over {wk[1]} weekend day{'s' if wk[1] != 1 else ''}"
                 f" vs. {wk[2]:.1f} mm/day over {wk[3]} weekday{'s' if wk[3] != 1 else ''}"
+            )
+        ws = weekend_vs_weekday_sunshine(weather)
+        if ws:
+            lines.append(
+                f"- Weekend vs. weekday sunshine: **{ws[0]:.1f} h/day** over {ws[1]} weekend day{'s' if ws[1] != 1 else ''}"
+                f" vs. {ws[2]:.1f} h/day over {ws[3]} weekday{'s' if ws[3] != 1 else ''}"
             )
         r = rain_sun_correlation(weather)
         lines.append(

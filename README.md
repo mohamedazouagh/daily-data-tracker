@@ -45,6 +45,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Sunniest weekday so far: **Sunday** (10.1 h on average over 4 days)
 - Dry days by weekday: Mon 2/3 · Tue 1/3 · Wed 1/3 · Thu 1/3 · Fri 2/4 · Sat 2/4 · Sun 2/4
 - Weekend vs. weekday rain: **1.7 mm/day** over 8 weekend days vs. 1.8 mm/day over 16 weekdays
+- Weekend vs. weekday sunshine: **9.7 h/day** over 8 weekend days vs. 8.3 h/day over 16 weekdays
 - Rain vs. sunshine correlation: **r = -0.60**
 
 Last 7 days (Breda):
@@ -127,4 +128,6 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Heaviest-rain share: what fraction of all rain fell on the single wettest day
 - [x] Share of rain from the 3 wettest days (how concentrated rainfall is overall)
 - [x] Weekend vs. weekday rain: average mm on Saturdays/Sundays against Monday–Friday
-- [ ] Weekend vs. weekday sunshine: do Saturdays/Sundays get more sun than Monday–Friday
+- [x] Weekend vs. weekday sunshine: do Saturdays/Sundays get more sun than Monday–Friday
+- [ ] Current dry or wet run: how many days in a row the latest weather has lasted
+- [ ] Weekend vs. weekday temperature: are Saturdays/Sundays warmer than Monday–Friday

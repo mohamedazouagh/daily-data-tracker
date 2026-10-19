@@ -816,3 +816,22 @@ def test_weekend_vs_weekday_rain_skips_missing_and_needs_both_groups():
 def test_stats_markdown_weekend_rain_line():
     md = report.stats_markdown(_daily_rain([1.0, 3.0, 4.0, 0.0, 2.0]), [])
     assert "- Weekend vs. weekday rain: **2.0 mm/day** over 2 weekend days vs. 2.0 mm/day over 3 weekdays" in md
+
+
+def test_weekend_vs_weekday_sunshine_counts_overcast_days():
+    # 2026-09-28 is a Monday: Mon..Sun, then Mon
+    rows = _sun_days("2026-09-28", [4.0, 2.0, 0.0, 6.0, 3.0, 9.0, 7.0, 0.0])
+    we, wen, wd, wdn = report.weekend_vs_weekday_sunshine(rows)
+    assert (we, wen, wdn) == (8.0, 2, 6)
+    assert round(wd, 4) == round(15.0 / 6, 4)
+
+
+def test_weekend_vs_weekday_sunshine_skips_missing_and_needs_both_groups():
+    rows = _sun_days("2026-10-02", [5.0, "", 3.0])  # Fri, Sat (missing), Sun
+    assert report.weekend_vs_weekday_sunshine(rows) == (3.0, 1, 5.0, 1)
+    assert report.weekend_vs_weekday_sunshine(_sun_days("2026-09-28", [1.0, 2.0])) is None  # Mon + Tue only
+
+
+def test_stats_markdown_weekend_sunshine_line():
+    md = report.stats_markdown(_daily_rain([1.0, 3.0, 4.0, 0.0, 2.0]), [])
+    assert "- Weekend vs. weekday sunshine: **5.0 h/day** over 2 weekend days vs. 5.0 h/day over 3 weekdays" in md
