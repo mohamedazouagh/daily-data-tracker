@@ -164,6 +164,39 @@ def test_longest_dry_streak_none_without_dry_days():
     assert report.longest_dry_streak([]) is None
 
 
+def test_longest_wet_streak_picks_longest_run_earliest_on_ties():
+    rows = _rain_rows(
+        ("2026-09-01", "0.2"), ("2026-09-02", "3.0"),
+        ("2026-09-03", "0.0"),
+        ("2026-09-04", "1.1"), ("2026-09-05", "0.4"),
+        ("2026-09-06", "0.0"),
+    )
+    assert report.longest_wet_streak(rows) == (2, "2026-09-01", "2026-09-02")
+
+
+def test_longest_wet_streak_breaks_on_gap_and_missing_value():
+    rows = _rain_rows(
+        ("2026-09-01", "2.0"), ("2026-09-02", "1.0"), ("2026-09-03", "0.5"),
+        ("2026-09-05", "4.0"),  # gap: 09-04 not stored
+        ("2026-09-06", ""), ("2026-09-07", "1.0"),
+    )
+    assert report.longest_wet_streak(rows) == (3, "2026-09-01", "2026-09-03")
+
+
+def test_longest_wet_streak_none_when_all_dry_or_empty():
+    assert report.longest_wet_streak(_rain_rows(("2026-09-01", "0.0"))) is None
+    assert report.longest_wet_streak([]) is None
+
+
+def test_stats_markdown_includes_longest_wet_run():
+    rows = [
+        {"date": d, "temp_max_c": "15", "temp_min_c": "8", "precip_mm": p, "sunshine_h": "5"}
+        for d, p in [("2026-09-01", "1.0"), ("2026-09-02", "2.5"), ("2026-09-03", "0.0")]
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Longest wet run: **2 days** (2026-09-01 → 2026-09-02)" in md
+
+
 def _temp_rows(*pairs):
     return [{"date": d, "temp_max_c": t, "precip_mm": "0"} for d, t in pairs]
 

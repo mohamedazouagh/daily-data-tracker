@@ -233,6 +233,20 @@ def longest_dry_streak(rows: list[dict]) -> tuple[int, str, str] | None:
     return _longest_run(rows, lambda r: _value(r, "precip_mm") == 0)
 
 
+def longest_wet_streak(rows: list[dict]) -> tuple[int, str, str] | None:
+    """Longest run of consecutive calendar days with some rain (more than 0 mm).
+
+    The mirror image of ``longest_dry_streak``: missing rain values and gaps in
+    the stored dates break a run, and the earliest run wins ties.
+    """
+
+    def wet(r: dict) -> bool:
+        mm = _value(r, "precip_mm")
+        return mm is not None and mm > 0
+
+    return _longest_run(rows, wet)
+
+
 def current_rain_run(rows: list[dict]) -> tuple[str, int, str] | None:
     """The ongoing dry or wet run up to the latest stored day.
 
@@ -748,6 +762,9 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         streak = longest_dry_streak(weather)
         if streak:
             lines.append(f"- Longest dry streak: {_streak_text(streak)}")
+        wet = longest_wet_streak(weather)
+        if wet:
+            lines.append(f"- Longest wet run: {_streak_text(wet)}")
         run = current_rain_run(weather)
         if run:
             kind, n, first = run
