@@ -28,7 +28,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Average max temperature: **18.8 °C**
 - Warmest day: **26.2 °C** · Coldest max: **11.6 °C**
 - Last 7 days vs. the 7 before (avg max): **15.4 °C** vs. 17.1 °C (-1.8 °C)
-- Total rain: **45.3 mm** · Dry days: **11**
+- Total rain: **44.3 mm** · Dry days: **11**
 - Coldest night: **4.8 °C** on 2026-10-12
 - First frost (min below 0 °C): none yet
 - Warmest night: **17.8 °C** on 2026-09-30
@@ -36,7 +36,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **8.5 h/day**
 - Wettest day: **8.1 mm** on 2026-10-07
 - Wettest day's share of all rain: **18%** (8.1 mm on 2026-10-07)
-- Share of rain from the 3 wettest days: **47%** (2026-10-07 8.1 mm, 2026-10-09 7.6 mm, 2026-10-18 5.8 mm)
+- Share of rain from the 3 wettest days: **49%** (2026-10-07 8.1 mm, 2026-10-09 7.6 mm, 2026-10-18 5.8 mm)
 - Rain intensity (wet days only): **3.0 mm/day** over 15 wet days
 - Rainiest week: **23.7 mm** (2026-10-07 → 2026-10-13)
 - Longest dry streak: **5 days** (2026-10-02 → 2026-10-06)
@@ -46,15 +46,15 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Wettest weekday so far: **Wednesday** (3.1 mm on average over 3 days)
 - Sunniest weekday so far: **Sunday** (10.1 h on average over 4 days)
 - Dry days by weekday: Mon 2/4 · Tue 1/4 · Wed 1/3 · Thu 1/3 · Fri 2/4 · Sat 2/4 · Sun 2/4
-- Weekend vs. weekday rain: **1.7 mm/day** over 8 weekend days vs. 1.8 mm/day over 18 weekdays
+- Weekend vs. weekday rain: **1.7 mm/day** over 8 weekend days vs. 1.7 mm/day over 18 weekdays
 - Weekend vs. weekday sunshine: **9.7 h/day** over 8 weekend days vs. 7.9 h/day over 18 weekdays
-- Rain vs. sunshine correlation: **r = -0.53**
+- Rain vs. sunshine correlation: **r = -0.52**
 
 Last 7 days (Breda):
 
 | Date | Max °C | Min °C | Rain mm | Sun h |
 |---|---|---|---|---|
-| 2026-10-20 | 12.3 | 6.0 | 3.4 | 6.64 |
+| 2026-10-20 | 12.3 | 6.0 | 2.4 | 6.64 |
 | 2026-10-19 | 14.8 | 8.2 | 0.6 | 3.44 |
 | 2026-10-18 | 11.6 | 6.5 | 5.8 | 7.48 |
 | 2026-10-17 | 14.0 | 8.0 | 2.1 | 10.1 |
