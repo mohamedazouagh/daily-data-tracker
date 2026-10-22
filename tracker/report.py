@@ -614,6 +614,16 @@ def weekend_vs_weekday_sunshine(rows: list[dict]) -> tuple[float, int, float, in
     return _weekend_split(rows, "sunshine_h")
 
 
+def weekend_vs_weekday_max_temp(rows: list[dict]) -> tuple[float, int, float, int] | None:
+    """Average max temperature on Saturdays/Sundays vs. Monday–Friday.
+
+    Days without a max temperature are skipped. Returns (weekend mean °C,
+    weekend days, weekday mean °C, weekday days), or None until both groups
+    have at least one day.
+    """
+    return _weekend_split(rows, "temp_max_c")
+
+
 def _weekend_split(rows: list[dict], key: str) -> tuple[float, int, float, int] | None:
     weekend: list[float] = []
     weekday: list[float] = []
@@ -797,6 +807,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(
                 f"- Weekend vs. weekday sunshine: **{ws[0]:.1f} h/day** over {ws[1]} weekend day{'s' if ws[1] != 1 else ''}"
                 f" vs. {ws[2]:.1f} h/day over {ws[3]} weekday{'s' if ws[3] != 1 else ''}"
+            )
+        wt = weekend_vs_weekday_max_temp(weather)
+        if wt:
+            diff = wt[0] - wt[2]
+            lines.append(
+                f"- Weekend vs. weekday max temperature: **{wt[0]:.1f} °C** over {wt[1]} weekend day{'s' if wt[1] != 1 else ''}"
+                f" vs. {wt[2]:.1f} °C over {wt[3]} weekday{'s' if wt[3] != 1 else ''} ({diff:+.1f} °C)"
             )
         r = rain_sun_correlation(weather)
         lines.append(

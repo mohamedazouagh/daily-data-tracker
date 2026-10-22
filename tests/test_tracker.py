@@ -890,3 +890,32 @@ def test_stats_markdown_current_run_line():
     assert "- Current run: **2 wet days in a row** since 2026-10-02" in md
     md = report.stats_markdown(_daily_rain([1.0, 0.0]), [])
     assert "- Current run: **1 dry day in a row**\n" in md + "\n"
+
+
+def _max_days(start: str, temps: list) -> list[dict]:
+    d0 = date.fromisoformat(start)
+    return [
+        {"date": (d0 + timedelta(days=i)).isoformat(), "temp_max_c": "" if v is None else v}
+        for i, v in enumerate(temps)
+    ]
+
+
+def test_weekend_vs_weekday_max_temp_splits_and_skips_missing():
+    # 2026-09-28 is a Monday: Mon..Fri, Sat, Sun (missing), Mon
+    rows = _max_days("2026-09-28", [10.0, 12.0, 14.0, 16.0, 18.0, 20.0, None, 15.0])
+    assert report.weekend_vs_weekday_max_temp(rows) == (20.0, 1, 14.166666666666666, 6)
+
+
+def test_weekend_vs_weekday_max_temp_needs_both_groups():
+    assert report.weekend_vs_weekday_max_temp(_max_days("2026-09-28", [10.0, 11.0])) is None
+    assert report.weekend_vs_weekday_max_temp([]) is None
+
+
+def test_stats_markdown_shows_weekend_temperature_line():
+    rows = [
+        {"date": r["date"], "temp_max_c": r["temp_max_c"], "temp_min_c": 5.0, "precip_mm": 0.0, "sunshine_h": 5.0}
+        for r in _max_days("2026-09-28", [10.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Weekend vs. weekday max temperature: **21.0 °C** over 2 weekend days vs. 14.0 °C over 5 weekdays (+7.0 °C)" in md
+
