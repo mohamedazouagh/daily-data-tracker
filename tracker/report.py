@@ -247,6 +247,32 @@ def longest_wet_streak(rows: list[dict]) -> tuple[int, str, str] | None:
     return _longest_run(rows, wet)
 
 
+def wettest_run(rows: list[dict]) -> tuple[float, int, str, str] | None:
+    """The run of consecutive wet days (more than 0 mm) with the most rain in total.
+
+    Runs are split the same way as ``longest_wet_streak``: dry days, missing
+    rain values and gaps in the stored dates end a run. Returns (total mm,
+    days, first date, last date); the earliest run wins ties. Returns None
+    when no day has rain.
+    """
+    best: tuple[float, int, str, str] | None = None
+    total, n, start, prev_day = 0.0, 0, "", None
+    for r in sorted(rows, key=lambda r: r["date"]):
+        day = date.fromisoformat(r["date"])
+        mm = _value(r, "precip_mm")
+        if mm is not None and mm > 0:
+            if n and prev_day == day - timedelta(days=1):
+                total, n = total + mm, n + 1
+            else:
+                total, n, start = mm, 1, r["date"]
+            if best is None or round(total, 6) > round(best[0], 6):
+                best = (total, n, start, r["date"])
+        else:
+            total, n = 0.0, 0
+        prev_day = day
+    return best
+
+
 def current_rain_run(rows: list[dict]) -> tuple[str, int, str] | None:
     """The ongoing dry or wet run up to the latest stored day.
 
@@ -775,6 +801,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         wet = longest_wet_streak(weather)
         if wet:
             lines.append(f"- Longest wet run: {_streak_text(wet)}")
+        soak = wettest_run(weather)
+        if soak:
+            soak_mm, soak_n, soak_first, soak_last = soak
+            span = soak_first if soak_n == 1 else f"{soak_first} → {soak_last}"
+            lines.append(
+                f"- Wettest run by total rain: **{soak_mm:.1f} mm** over {soak_n} day{'s' if soak_n != 1 else ''} ({span})"
+            )
         run = current_rain_run(weather)
         if run:
             kind, n, first = run

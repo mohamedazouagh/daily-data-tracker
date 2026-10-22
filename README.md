@@ -41,6 +41,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Rainiest week: **23.7 mm** (2026-10-07 → 2026-10-13)
 - Longest dry streak: **5 days** (2026-10-02 → 2026-10-06)
 - Longest wet run: **6 days** (2026-10-16 → 2026-10-21)
+- Wettest run by total rain: **22.9 mm** over 5 days (2026-10-07 → 2026-10-11)
 - Current run: **6 wet days in a row** since 2026-10-16
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Friday** (3.0 mm on average over 4 days)
@@ -136,4 +137,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Weekend vs. weekday temperature: are Saturdays/Sundays warmer than Monday–Friday
 - [x] Longest wet run (consecutive days with rain) next to the longest dry streak
 - [ ] Weekend vs. weekday night (min) temperature
-- [ ] Wettest run by total rain: the consecutive wet days that together brought the most mm
+- [x] Wettest run by total rain: the consecutive wet days that together brought the most mm
+- [ ] Average rain per day within wet runs (how intense the longest spells are)

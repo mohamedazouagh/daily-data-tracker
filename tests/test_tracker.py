@@ -919,3 +919,31 @@ def test_stats_markdown_shows_weekend_temperature_line():
     md = report.stats_markdown(rows, [])
     assert "- Weekend vs. weekday max temperature: **21.0 °C** over 2 weekend days vs. 14.0 °C over 5 weekdays (+7.0 °C)" in md
 
+
+def _rain_days(start: str, mms: list) -> list[dict]:
+    d0 = date.fromisoformat(start)
+    return [
+        {"date": (d0 + timedelta(days=i)).isoformat(), "precip_mm": "" if v is None else v}
+        for i, v in enumerate(mms)
+    ]
+
+
+def test_wettest_run_prefers_total_over_length():
+    # a 3-day drizzle (1.5 mm) loses to a 2-day downpour (12 mm)
+    rows = _rain_days("2026-10-01", [0.5, 0.5, 0.5, 0.0, 4.0, 8.0, 0.0])
+    assert report.wettest_run(rows) == (12.0, 2, "2026-10-05", "2026-10-06")
+
+
+def test_wettest_run_breaks_on_missing_values_and_gaps():
+    rows = _rain_days("2026-10-01", [3.0, None, 3.0, 3.0])
+    assert report.wettest_run(rows) == (6.0, 2, "2026-10-03", "2026-10-04")
+    gap = [{"date": "2026-10-01", "precip_mm": 5.0}, {"date": "2026-10-03", "precip_mm": 4.0}]
+    assert report.wettest_run(gap) == (5.0, 1, "2026-10-01", "2026-10-01")
+
+
+def test_wettest_run_earliest_wins_ties_and_none_when_dry():
+    rows = _rain_days("2026-10-01", [2.0, 0.0, 2.0])
+    assert report.wettest_run(rows) == (2.0, 1, "2026-10-01", "2026-10-01")
+    assert report.wettest_run(_rain_days("2026-10-01", [0.0, 0.0])) is None
+    assert report.wettest_run([]) is None
+
