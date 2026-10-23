@@ -947,3 +947,33 @@ def test_wettest_run_earliest_wins_ties_and_none_when_dry():
     assert report.wettest_run(_rain_days("2026-10-01", [0.0, 0.0])) is None
     assert report.wettest_run([]) is None
 
+
+def _min_days(start: str, temps: list) -> list[dict]:
+    d0 = date.fromisoformat(start)
+    return [
+        {"date": (d0 + timedelta(days=i)).isoformat(), "temp_min_c": "" if v is None else v}
+        for i, v in enumerate(temps)
+    ]
+
+
+def test_weekend_vs_weekday_min_temp_splits_and_skips_missing():
+    # 2026-09-28 is a Monday: Mon..Fri, Sat (missing), Sun, Mon
+    rows = _min_days("2026-09-28", [4.0, 6.0, 8.0, 10.0, 12.0, None, -1.0, 2.0])
+    assert report.weekend_vs_weekday_min_temp(rows) == (-1.0, 1, 7.0, 6)
+
+
+def test_weekend_vs_weekday_min_temp_needs_both_groups():
+    assert report.weekend_vs_weekday_min_temp(_min_days("2026-10-03", [3.0, 4.0])) is None  # Sat + Sun only
+    assert report.weekend_vs_weekday_min_temp([]) is None
+
+
+def test_stats_markdown_shows_weekend_night_temperature_line():
+    rows = [
+        {"date": r["date"], "temp_max_c": 15.0, "temp_min_c": r["temp_min_c"], "precip_mm": 0.0, "sunshine_h": 5.0}
+        for r in _min_days("2026-09-28", [5.0, 6.0, 7.0, 8.0, 9.0, 3.0, 4.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert (
+        "- Weekend vs. weekday night (min) temperature: **3.5 °C** over 2 weekend days"
+        " vs. 7.0 °C over 5 weekdays (-3.5 °C)"
+    ) in md

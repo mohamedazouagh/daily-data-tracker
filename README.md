@@ -50,6 +50,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Weekend vs. weekday rain: **1.7 mm/day** over 8 weekend days vs. 2.9 mm/day over 21 weekdays
 - Weekend vs. weekday sunshine: **9.7 h/day** over 8 weekend days vs. 7.5 h/day over 21 weekdays
 - Weekend vs. weekday max temperature: **17.1 °C** over 8 weekend days vs. 18.6 °C over 21 weekdays (-1.6 °C)
+- Weekend vs. weekday night (min) temperature: **9.0 °C** over 8 weekend days vs. 10.6 °C over 21 weekdays (-1.6 °C)
 - Rain vs. sunshine correlation: **r = -0.39**
 
 Last 7 days (Breda):
@@ -136,6 +137,7 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Current dry or wet run: how many days in a row the latest weather has lasted
 - [x] Weekend vs. weekday temperature: are Saturdays/Sundays warmer than Monday–Friday
 - [x] Longest wet run (consecutive days with rain) next to the longest dry streak
-- [ ] Weekend vs. weekday night (min) temperature
+- [x] Weekend vs. weekday night (min) temperature
 - [x] Wettest run by total rain: the consecutive wet days that together brought the most mm
 - [ ] Average rain per day within wet runs (how intense the longest spells are)
+- [ ] Warmest weekday for nights: which day of the week has the mildest average min temperature
