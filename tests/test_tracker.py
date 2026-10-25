@@ -1001,3 +1001,27 @@ def test_stats_markdown_shows_mildest_night_weekday_line():
     ]
     md = report.stats_markdown(rows, [])
     assert "- Mildest nights by weekday: **Tuesday** (8.5 °C average min over 1 day)" in md
+
+
+def test_longest_wet_run_intensity_uses_longest_run_not_wettest():
+    # 3-day drizzle (1.0 + 2.0 + 3.0) beats a 2-day downpour on length
+    rows = _rain_days("2026-10-01", [1.0, 2.0, 3.0, 0, 20.0, 10.0])
+    total, per_day = report.longest_wet_run_intensity(rows)
+    assert round(total, 6) == 6.0
+    assert round(per_day, 6) == 2.0
+
+
+def test_longest_wet_run_intensity_earliest_tie_and_none():
+    rows = _rain_days("2026-10-01", [4.0, 0, 9.0])
+    assert report.longest_wet_run_intensity(rows) == (4.0, 4.0)
+    assert report.longest_wet_run_intensity(_rain_days("2026-10-01", [0, 0, None])) is None
+    assert report.longest_wet_run_intensity([]) is None
+
+
+def test_stats_markdown_shows_wet_run_intensity():
+    rows = [
+        {"date": r["date"], "temp_max_c": 15.0, "temp_min_c": 8.0, "precip_mm": r["precip_mm"], "sunshine_h": 5.0}
+        for r in _rain_days("2026-10-01", [1.5, 2.5, 0.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Longest wet run: **2 days** (2026-10-01 → 2026-10-02), 4.0 mm at 2.0 mm/day" in md

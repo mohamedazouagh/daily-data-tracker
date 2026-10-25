@@ -273,6 +273,23 @@ def wettest_run(rows: list[dict]) -> tuple[float, int, str, str] | None:
     return best
 
 
+def longest_wet_run_intensity(rows: list[dict]) -> tuple[float, float] | None:
+    """Total rain and average mm per day over the longest wet run.
+
+    Uses the same run as ``longest_wet_streak`` (earliest run wins ties), so
+    the numbers always describe the spell shown on that line. Returns
+    (total mm, mm per day), or None when no day has rain.
+    """
+    run = longest_wet_streak(rows)
+    if run is None:
+        return None
+    n, first, last = run
+    total = sum(
+        _value(r, "precip_mm") or 0.0 for r in rows if first <= r["date"] <= last
+    )
+    return total, total / n
+
+
 def current_rain_run(rows: list[dict]) -> tuple[str, int, str] | None:
     """The ongoing dry or wet run up to the latest stored day.
 
@@ -829,7 +846,9 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(f"- Longest dry streak: {_streak_text(streak)}")
         wet = longest_wet_streak(weather)
         if wet:
-            lines.append(f"- Longest wet run: {_streak_text(wet)}")
+            intensity = longest_wet_run_intensity(weather)
+            extra = f", {intensity[0]:.1f} mm at {intensity[1]:.1f} mm/day" if intensity else ""
+            lines.append(f"- Longest wet run: {_streak_text(wet)}{extra}")
         soak = wettest_run(weather)
         if soak:
             soak_mm, soak_n, soak_first, soak_last = soak
