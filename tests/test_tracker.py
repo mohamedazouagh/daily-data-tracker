@@ -977,3 +977,27 @@ def test_stats_markdown_shows_weekend_night_temperature_line():
         "- Weekend vs. weekday night (min) temperature: **3.5 °C** over 2 weekend days"
         " vs. 7.0 °C over 5 weekdays (-3.5 °C)"
     ) in md
+
+
+def test_mildest_night_weekday_averages_and_skips_missing():
+    # 2026-09-28 is a Monday; two weeks, second Wednesday missing
+    temps = [5.0, 6.0, 9.0, 4.0, 3.0, 2.0, 1.0, 7.0, 6.0, None, 4.0, 3.0, 2.0, 1.0]
+    # Monday (5 + 7) / 2 = 6.0, Wednesday 9.0 over a single day
+    assert report.mildest_night_weekday(_min_days("2026-09-28", temps)) == ("Wednesday", 9.0, 1)
+
+
+def test_mildest_night_weekday_ties_go_to_monday_and_zero_counts():
+    rows = _min_days("2026-09-28", [-2.0, -3.0, -2.0])  # Mon, Tue, Wed
+    assert report.mildest_night_weekday(rows) == ("Monday", -2.0, 1)
+    assert report.mildest_night_weekday(_min_days("2026-09-28", [0.0])) == ("Monday", 0.0, 1)
+    assert report.mildest_night_weekday(_min_days("2026-09-28", [None])) is None
+    assert report.mildest_night_weekday([]) is None
+
+
+def test_stats_markdown_shows_mildest_night_weekday_line():
+    rows = [
+        {"date": r["date"], "temp_max_c": 15.0, "temp_min_c": r["temp_min_c"], "precip_mm": 0.0, "sunshine_h": 5.0}
+        for r in _min_days("2026-09-28", [5.0, 8.5, 7.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Mildest nights by weekday: **Tuesday** (8.5 °C average min over 1 day)" in md

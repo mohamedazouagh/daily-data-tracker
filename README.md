@@ -46,6 +46,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Friday** (8.1 mm on average over 5 days)
 - Sunniest weekday so far: **Sunday** (10.1 h on average over 4 days)
+- Mildest nights by weekday: **Wednesday** (11.9 °C average min over 4 days)
 - Dry days by weekday: Mon 2/4 · Tue 1/4 · Wed 1/4 · Thu 1/4 · Fri 2/5 · Sat 2/5 · Sun 2/4
 - Weekend vs. weekday rain: **3.7 mm/day** over 9 weekend days vs. 3.1 mm/day over 21 weekdays
 - Weekend vs. weekday sunshine: **9.3 h/day** over 9 weekend days vs. 7.5 h/day over 21 weekdays
@@ -140,4 +141,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Weekend vs. weekday night (min) temperature
 - [x] Wettest run by total rain: the consecutive wet days that together brought the most mm
 - [ ] Average rain per day within wet runs (how intense the longest spells are)
-- [ ] Warmest weekday for nights: which day of the week has the mildest average min temperature
+- [x] Warmest weekday for nights: which day of the week has the mildest average min temperature
+- [ ] Coldest weekday for days: which day of the week has the lowest average max temperature

@@ -620,6 +620,25 @@ def sunniest_weekday(rows: list[dict]) -> tuple[str, float, int] | None:
     return WEEKDAYS[best_day], avg, len(by_weekday[best_day])
 
 
+def mildest_night_weekday(rows: list[dict]) -> tuple[str, float, int] | None:
+    """Day of the week with the warmest average night, as (weekday, mean min °C, days counted).
+
+    Every stored day with a min temperature counts towards its weekday's
+    average; days without one are skipped. Ties go to the earlier weekday
+    (Monday first). Unlike rain or sunshine, an average of 0 °C is a real
+    result, so None is only returned when no day has a min temperature.
+    """
+    by_weekday: dict[int, list[float]] = {}
+    for r in rows:
+        t = _value(r, "temp_min_c")
+        if t is not None:
+            by_weekday.setdefault(date.fromisoformat(r["date"]).weekday(), []).append(t)
+    if not by_weekday:
+        return None
+    best_day = max(sorted(by_weekday), key=lambda d: mean(by_weekday[d]))
+    return WEEKDAYS[best_day], mean(by_weekday[best_day]), len(by_weekday[best_day])
+
+
 def weekend_vs_weekday_rain(rows: list[dict]) -> tuple[float, int, float, int] | None:
     """Average rain on Saturdays/Sundays vs. Monday–Friday.
 
@@ -835,6 +854,11 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         sd = sunniest_weekday(weather)
         if sd:
             lines.append(f"- Sunniest weekday so far: **{sd[0]}** ({sd[1]:.1f} h on average over {sd[2]} day{'s' if sd[2] != 1 else ''})")
+        mn = mildest_night_weekday(weather)
+        if mn:
+            lines.append(
+                f"- Mildest nights by weekday: **{mn[0]}** ({mn[1]:.1f} °C average min over {mn[2]} day{'s' if mn[2] != 1 else ''})"
+            )
         dry = dry_share_by_weekday(weather)
         if dry:
             parts = " · ".join(f"{day[:3]} {d}/{n}" for day, (d, n) in dry.items())
