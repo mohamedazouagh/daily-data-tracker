@@ -23,48 +23,48 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 ## Stats
 
 <!-- stats:start -->
-**Days tracked:** 30 weather · 21 FX
+**Days tracked:** 31 weather · 21 FX
 
-- Average max temperature: **18.0 °C**
+- Average max temperature: **17.8 °C**
 - Warmest day: **26.2 °C** · Coldest max: **11.6 °C**
-- Last 7 days vs. the 7 before (avg max): **13.0 °C** vs. 17.3 °C (-4.3 °C)
-- Total rain: **98.5 mm** · Dry days: **11**
+- Last 7 days vs. the 7 before (avg max): **13.2 °C** vs. 16.9 °C (-3.7 °C)
+- Total rain: **109.5 mm** · Dry days: **11**
 - Coldest night: **4.8 °C** on 2026-10-12
 - First frost (min below 0 °C): none yet
 - Warmest night: **17.8 °C** on 2026-09-30
 - Largest day/night range: **13.4 °C** on 2026-09-25
 - Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **8.1 h/day**
 - Wettest day: **28.7 mm** on 2026-10-23
-- Wettest day's share of all rain: **29%** (28.7 mm on 2026-10-23)
-- Share of rain from the 3 wettest days: **58%** (2026-10-23 28.7 mm, 2026-10-24 20.4 mm, 2026-10-07 8.1 mm)
-- Rain intensity (wet days only): **5.2 mm/day** over 19 wet days
-- Rainiest week: **63.0 mm** (2026-10-18 → 2026-10-24)
+- Wettest day's share of all rain: **26%** (28.7 mm on 2026-10-23)
+- Share of rain from the 3 wettest days: **55%** (2026-10-23 28.7 mm, 2026-10-24 20.4 mm, 2026-10-25 11.0 mm)
+- Rain intensity (wet days only): **5.5 mm/day** over 20 wet days
+- Rainiest week: **68.2 mm** (2026-10-19 → 2026-10-25)
 - Longest dry streak: **5 days** (2026-10-02 → 2026-10-06)
-- Longest wet run: **9 days** (2026-10-16 → 2026-10-24), 69.4 mm at 7.7 mm/day
-- Wettest run by total rain: **69.4 mm** over 9 days (2026-10-16 → 2026-10-24)
-- Current run: **9 wet days in a row** since 2026-10-16
+- Longest wet run: **10 days** (2026-10-16 → 2026-10-25), 80.4 mm at 8.0 mm/day
+- Wettest run by total rain: **80.4 mm** over 10 days (2026-10-16 → 2026-10-25)
+- Current run: **10 wet days in a row** since 2026-10-16
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Friday** (8.1 mm on average over 5 days)
-- Sunniest weekday so far: **Sunday** (10.1 h on average over 4 days)
+- Sunniest weekday so far: **Sunday** (9.9 h on average over 5 days)
 - Mildest nights by weekday: **Wednesday** (11.9 °C average min over 4 days)
-- Dry days by weekday: Mon 2/4 · Tue 1/4 · Wed 1/4 · Thu 1/4 · Fri 2/5 · Sat 2/5 · Sun 2/4
-- Weekend vs. weekday rain: **3.7 mm/day** over 9 weekend days vs. 3.1 mm/day over 21 weekdays
-- Weekend vs. weekday sunshine: **9.3 h/day** over 9 weekend days vs. 7.5 h/day over 21 weekdays
-- Weekend vs. weekday max temperature: **16.5 °C** over 9 weekend days vs. 18.6 °C over 21 weekdays (-2.1 °C)
-- Weekend vs. weekday night (min) temperature: **9.0 °C** over 9 weekend days vs. 10.6 °C over 21 weekdays (-1.6 °C)
-- Rain vs. sunshine correlation: **r = -0.37**
+- Dry days by weekday: Mon 2/4 · Tue 1/4 · Wed 1/4 · Thu 1/4 · Fri 2/5 · Sat 2/5 · Sun 2/5
+- Weekend vs. weekday rain: **4.5 mm/day** over 10 weekend days vs. 3.1 mm/day over 21 weekdays
+- Weekend vs. weekday sunshine: **9.3 h/day** over 10 weekend days vs. 7.5 h/day over 21 weekdays
+- Weekend vs. weekday max temperature: **16.2 °C** over 10 weekend days vs. 18.6 °C over 21 weekdays (-2.4 °C)
+- Weekend vs. weekday night (min) temperature: **9.1 °C** over 10 weekend days vs. 10.6 °C over 21 weekdays (-1.5 °C)
+- Rain vs. sunshine correlation: **r = -0.35**
 
 Last 7 days (Breda):
 
 | Date | Max °C | Min °C | Rain mm | Sun h |
 |---|---|---|---|---|
+| 2026-10-25 | 13.3 | 10.4 | 11.0 | 9.18 |
 | 2026-10-24 | 12.2 | 8.9 | 20.4 | 6.48 |
 | 2026-10-23 | 13.8 | 9.6 | 28.7 | 5.0 |
 | 2026-10-22 | 13.6 | 7.8 | 4.2 | 8.1 |
 | 2026-10-21 | 12.6 | 8.8 | 0.9 | 2.59 |
 | 2026-10-20 | 12.3 | 6.0 | 2.4 | 6.64 |
 | 2026-10-19 | 14.8 | 8.2 | 0.6 | 3.44 |
-| 2026-10-18 | 11.6 | 6.5 | 5.8 | 7.48 |
 
 Latest EUR rates (2026-10-23): USD 1.1193 · GBP 0.83728 · CHF 0.9227 · TRY 55.6715
 
