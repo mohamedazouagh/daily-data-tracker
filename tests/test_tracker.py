@@ -1025,3 +1025,26 @@ def test_stats_markdown_shows_wet_run_intensity():
     ]
     md = report.stats_markdown(rows, [])
     assert "- Longest wet run: **2 days** (2026-10-01 → 2026-10-02), 4.0 mm at 2.0 mm/day" in md
+
+
+def test_coldest_day_weekday_averages_and_skips_missing():
+    # 2026-09-28 is a Monday; two weeks, second Thursday missing
+    temps = [15.0, 16.0, 14.0, 9.0, 18.0, 17.0, 16.0, 13.0, 16.0, 14.0, None, 18.0, 17.0, 16.0]
+    # Monday (15 + 13) / 2 = 14.0, Wednesday 14.0, Thursday 9.0 over a single day
+    assert report.coldest_day_weekday(_max_days("2026-09-28", temps)) == ("Thursday", 9.0, 1)
+
+
+def test_coldest_day_weekday_ties_go_to_monday_and_none_when_empty():
+    rows = _max_days("2026-09-28", [-1.0, 3.0, -1.0])  # Mon, Tue, Wed
+    assert report.coldest_day_weekday(rows) == ("Monday", -1.0, 1)
+    assert report.coldest_day_weekday(_max_days("2026-09-28", [None, None])) is None
+    assert report.coldest_day_weekday([]) is None
+
+
+def test_stats_markdown_shows_coldest_day_weekday():
+    rows = [
+        {"date": "2026-09-29", "temp_max_c": 12.5, "temp_min_c": 8.0, "precip_mm": 0.0, "sunshine_h": 5.0},
+        {"date": "2026-09-30", "temp_max_c": 14.0, "temp_min_c": 7.0, "precip_mm": 0.0, "sunshine_h": 5.0},
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Coldest days by weekday: **Tuesday** (12.5 °C average max over 1 day)" in md
