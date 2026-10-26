@@ -290,6 +290,54 @@ def longest_wet_run_intensity(rows: list[dict]) -> tuple[float, float] | None:
     return total, total / n
 
 
+def wet_runs(rows: list[dict], min_days: int = 3) -> list[tuple[str, str, int, float]]:
+    """Every run of consecutive wet days lasting at least ``min_days``, oldest first.
+
+    Runs are split like ``longest_wet_streak``: dry days, missing rain values
+    and gaps in the stored dates end a run. Each entry is (first date, last
+    date, days, total mm); divide total by days for the spell's intensity.
+    """
+    runs: list[tuple[str, str, int, float]] = []
+    start, last, n, total, prev_day = "", "", 0, 0.0, None
+
+    def close() -> None:
+        if n >= min_days:
+            runs.append((start, last, n, total))
+
+    for r in sorted(rows, key=lambda r: r["date"]):
+        day = date.fromisoformat(r["date"])
+        mm = _value(r, "precip_mm")
+        if mm is not None and mm > 0:
+            if n and prev_day == day - timedelta(days=1):
+                n, total = n + 1, total + mm
+            else:
+                close()
+                start, n, total = r["date"], 1, mm
+            last = r["date"]
+        else:
+            close()
+            n, total = 0, 0.0
+        prev_day = day
+    close()
+    return runs
+
+
+def wet_run_trend(rows: list[dict], min_days: int = 3) -> tuple[tuple, tuple, str] | None:
+    """Compare the latest long wet spell with the one before it.
+
+    Returns (latest run, previous run, "heavier" / "lighter" / "same") using
+    mm per day, with runs as returned by ``wet_runs``. Returns None until two
+    spells of at least ``min_days`` days are stored.
+    """
+    runs = wet_runs(rows, min_days)
+    if len(runs) < 2:
+        return None
+    prev, latest = runs[-2], runs[-1]
+    a, b = round(latest[3] / latest[2], 6), round(prev[3] / prev[2], 6)
+    verdict = "heavier" if a > b else "lighter" if a < b else "same"
+    return latest, prev, verdict
+
+
 def current_rain_run(rows: list[dict]) -> tuple[str, int, str] | None:
     """The ongoing dry or wet run up to the latest stored day.
 
@@ -875,6 +923,17 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(
                 f"- Wettest run by total rain: **{soak_mm:.1f} mm** over {soak_n} day{'s' if soak_n != 1 else ''} ({span})"
             )
+        spells = wet_runs(weather)
+        trend = wet_run_trend(weather)
+        if trend:
+            (l_first, l_last, l_n, l_mm), (p_first, p_last, p_n, p_mm), verdict = trend
+            lines.append(
+                f"- Wet spells of 3+ days: {len(spells)}; latest **{l_mm / l_n:.1f} mm/day** over {l_n} days"
+                f" ({l_first} → {l_last}) vs. {p_mm / p_n:.1f} mm/day over {p_n} days"
+                f" ({p_first} → {p_last}), {verdict}"
+            )
+        elif spells:
+            lines.append("- Wet spells of 3+ days: 1 so far, trend needs a second one")
         run = current_rain_run(weather)
         if run:
             kind, n, first = run

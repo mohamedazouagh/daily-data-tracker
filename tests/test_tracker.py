@@ -1048,3 +1048,40 @@ def test_stats_markdown_shows_coldest_day_weekday():
     ]
     md = report.stats_markdown(rows, [])
     assert "- Coldest days by weekday: **Tuesday** (12.5 °C average max over 1 day)" in md
+
+
+def test_wet_runs_keeps_only_long_spells_and_splits_on_gaps():
+    rows = _rain_days("2026-10-01", [1.0, 2.0, 3.0, 0, 5.0, 5.0, None, 2.0, 2.0, 2.0, 2.0])
+    assert report.wet_runs(rows) == [
+        ("2026-10-01", "2026-10-03", 3, 6.0),
+        ("2026-10-08", "2026-10-11", 4, 8.0),
+    ]
+    # a missing calendar day also ends a spell
+    gap = [r for r in rows if r["date"] != "2026-10-02"]
+    assert report.wet_runs(gap) == [("2026-10-08", "2026-10-11", 4, 8.0)]
+    assert report.wet_runs(rows, min_days=2)[1] == ("2026-10-05", "2026-10-06", 2, 10.0)
+
+
+def test_wet_run_trend_compares_latest_with_previous():
+    rows = _rain_days("2026-10-01", [1.0, 2.0, 3.0, 0, 4.0, 4.0, 4.0])
+    latest, prev, verdict = report.wet_run_trend(rows)
+    assert latest == ("2026-10-05", "2026-10-07", 3, 12.0)
+    assert prev == ("2026-10-01", "2026-10-03", 3, 6.0)
+    assert verdict == "heavier"
+    assert report.wet_run_trend(_rain_days("2026-10-01", [3.0, 3.0, 3.0, 0, 1.0, 1.0, 1.0]))[2] == "lighter"
+    assert report.wet_run_trend(_rain_days("2026-10-01", [1.0, 1.0, 1.0, 0, 1.0, 1.0, 1.0]))[2] == "same"
+    assert report.wet_run_trend(_rain_days("2026-10-01", [1.0, 1.0, 1.0])) is None
+
+
+def test_stats_markdown_shows_wet_spell_trend():
+    rows = [
+        {"date": r["date"], "temp_max_c": 15.0, "temp_min_c": 8.0, "precip_mm": r["precip_mm"], "sunshine_h": 5.0}
+        for r in _rain_days("2026-10-01", [1.0, 2.0, 3.0, 0, 4.0, 4.0, 4.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert (
+        "- Wet spells of 3+ days: 2; latest **4.0 mm/day** over 3 days (2026-10-05 → 2026-10-07)"
+        " vs. 2.0 mm/day over 3 days (2026-10-01 → 2026-10-03), heavier"
+    ) in md
+    one = report.stats_markdown(rows[:3], [])
+    assert "- Wet spells of 3+ days: 1 so far, trend needs a second one" in one
