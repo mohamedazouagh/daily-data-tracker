@@ -50,6 +50,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Sunniest weekday so far: **Sunday** (9.9 h on average over 5 days)
 - Mildest nights by weekday: **Wednesday** (11.9 °C average min over 4 days)
 - Coldest days by weekday: **Saturday** (16.1 °C average max over 5 days)
+- Widest day/night range by weekday: **Tuesday** (8.8 °C average max − min over 4 days)
 - Dry days by weekday: Mon 2/5 · Tue 1/4 · Wed 1/4 · Thu 1/4 · Fri 2/5 · Sat 2/5 · Sun 2/5
 - Weekend vs. weekday rain: **4.5 mm/day** over 10 weekend days vs. 3.0 mm/day over 22 weekdays
 - Weekend vs. weekday sunshine: **9.3 h/day** over 10 weekend days vs. 7.4 h/day over 22 weekdays
@@ -149,4 +150,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Dry-spell history: how long each dry spell of 3+ days lasted and whether they are getting shorter
 - [ ] Dry-spell sunshine: average sun hours during each dry spell of 3+ days
 - [x] Coldest weekday for days: which day of the week has the lowest average max temperature
-- [ ] Day/night range by weekday: which day of the week has the widest average max − min spread
+- [x] Day/night range by weekday: which day of the week has the widest average max − min spread
+- [ ] Day/night range trend: is the weekly average max − min spread shrinking as autumn goes on

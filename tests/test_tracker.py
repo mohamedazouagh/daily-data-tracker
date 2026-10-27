@@ -1123,3 +1123,34 @@ def test_stats_markdown_shows_dry_spell_trend():
     ) in md
     one = report.stats_markdown(rows[:4], [])
     assert "- Dry spells of 3+ days: 1 so far, trend needs a second one" in one
+
+
+def _range_days(start: str, pairs: list) -> list[dict]:
+    d0 = date.fromisoformat(start)
+    return [
+        {"date": (d0 + timedelta(days=i)).isoformat(), "temp_max_c": "" if hi is None else hi, "temp_min_c": "" if lo is None else lo}
+        for i, (hi, lo) in enumerate(pairs)
+    ]
+
+
+def test_widest_range_weekday_averages_and_needs_both_values():
+    # 2026-09-28 is a Monday; second week's Wednesday has no min, so it is skipped
+    pairs = [(15, 10), (14, 9), (20, 8), (12, 10), (16, 6), (15, 10), (15, 10),
+             (17, 10), (14, 9), (25, None), (12, 10), (16, 10), (15, 10), (15, 10)]
+    # Monday (5 + 7) / 2 = 6.0, Wednesday 12 over one day, Friday (10 + 6) / 2 = 8.0
+    assert report.widest_range_weekday(_range_days("2026-09-28", pairs)) == ("Wednesday", 12.0, 1)
+
+
+def test_widest_range_weekday_ties_go_to_monday_and_none_when_empty():
+    assert report.widest_range_weekday(_range_days("2026-09-28", [(10, 5), (9, 4)])) == ("Monday", 5.0, 1)
+    assert report.widest_range_weekday(_range_days("2026-09-28", [(10, None), (None, 4)])) is None
+    assert report.widest_range_weekday([]) is None
+
+
+def test_stats_markdown_shows_widest_range_weekday():
+    rows = [
+        {"date": "2026-09-29", "temp_max_c": 18.0, "temp_min_c": 6.5, "precip_mm": 0.0, "sunshine_h": 5.0},
+        {"date": "2026-09-30", "temp_max_c": 14.0, "temp_min_c": 7.0, "precip_mm": 0.0, "sunshine_h": 5.0},
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Widest day/night range by weekday: **Tuesday** (11.5 °C average max − min over 1 day)" in md
