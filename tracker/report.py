@@ -338,6 +338,49 @@ def wet_run_trend(rows: list[dict], min_days: int = 3) -> tuple[tuple, tuple, st
     return latest, prev, verdict
 
 
+def dry_runs(rows: list[dict], min_days: int = 3) -> list[tuple[str, str, int]]:
+    """Every run of consecutive dry days (exactly 0 mm) lasting at least ``min_days``, oldest first.
+
+    The dry mirror of ``wet_runs``: wet days, missing rain values and gaps in
+    the stored dates end a run. Each entry is (first date, last date, days).
+    """
+    runs: list[tuple[str, str, int]] = []
+    start, last, n, prev_day = "", "", 0, None
+    for r in sorted(rows, key=lambda r: r["date"]):
+        day = date.fromisoformat(r["date"])
+        if _value(r, "precip_mm") == 0:
+            if n and prev_day == day - timedelta(days=1):
+                n += 1
+            else:
+                if n >= min_days:
+                    runs.append((start, last, n))
+                start, n = r["date"], 1
+            last = r["date"]
+        else:
+            if n >= min_days:
+                runs.append((start, last, n))
+            n = 0
+        prev_day = day
+    if n >= min_days:
+        runs.append((start, last, n))
+    return runs
+
+
+def dry_run_trend(rows: list[dict], min_days: int = 3) -> tuple[tuple, tuple, str] | None:
+    """Compare the latest long dry spell with the one before it.
+
+    Returns (latest run, previous run, "longer" / "shorter" / "same") by number
+    of days, with runs as returned by ``dry_runs``. Returns None until two
+    spells of at least ``min_days`` days are stored.
+    """
+    runs = dry_runs(rows, min_days)
+    if len(runs) < 2:
+        return None
+    prev, latest = runs[-2], runs[-1]
+    verdict = "longer" if latest[2] > prev[2] else "shorter" if latest[2] < prev[2] else "same"
+    return latest, prev, verdict
+
+
 def current_rain_run(rows: list[dict]) -> tuple[str, int, str] | None:
     """The ongoing dry or wet run up to the latest stored day.
 
@@ -934,6 +977,16 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             )
         elif spells:
             lines.append("- Wet spells of 3+ days: 1 so far, trend needs a second one")
+        dry_spells = dry_runs(weather)
+        dry_trend = dry_run_trend(weather)
+        if dry_trend:
+            (l_first, l_last, l_n), (p_first, p_last, p_n), verdict = dry_trend
+            lines.append(
+                f"- Dry spells of 3+ days: {len(dry_spells)} (lengths {', '.join(str(s[2]) for s in dry_spells)});"
+                f" latest **{l_n} days** ({l_first} → {l_last}) vs. {p_n} days ({p_first} → {p_last}), {verdict}"
+            )
+        elif dry_spells:
+            lines.append("- Dry spells of 3+ days: 1 so far, trend needs a second one")
         run = current_rain_run(weather)
         if run:
             kind, n, first = run

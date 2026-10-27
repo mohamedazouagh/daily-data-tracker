@@ -1085,3 +1085,41 @@ def test_stats_markdown_shows_wet_spell_trend():
     ) in md
     one = report.stats_markdown(rows[:3], [])
     assert "- Wet spells of 3+ days: 1 so far, trend needs a second one" in one
+
+
+def test_dry_runs_keeps_only_long_spells_and_splits_on_gaps_and_missing():
+    rows = _rain_days("2026-10-01", [0, 0, 0, 1.0, 0, 0, None, 0, 0, 0, 0, 2.0])
+    assert report.dry_runs(rows) == [
+        ("2026-10-01", "2026-10-03", 3),
+        ("2026-10-08", "2026-10-11", 4),
+    ]
+    # a missing calendar day also ends a spell
+    gap = [r for r in rows if r["date"] != "2026-10-02"]
+    assert report.dry_runs(gap) == [("2026-10-08", "2026-10-11", 4)]
+    assert report.dry_runs(rows, min_days=2)[1] == ("2026-10-05", "2026-10-06", 2)
+    # a spell still running on the newest day is included
+    assert report.dry_runs(_rain_days("2026-10-01", [1.0, 0, 0, 0])) == [("2026-10-02", "2026-10-04", 3)]
+
+
+def test_dry_run_trend_compares_latest_length_with_previous():
+    latest, prev, verdict = report.dry_run_trend(_rain_days("2026-10-01", [0, 0, 0, 1.0, 0, 0, 0, 0]))
+    assert latest == ("2026-10-05", "2026-10-08", 4)
+    assert prev == ("2026-10-01", "2026-10-03", 3)
+    assert verdict == "longer"
+    assert report.dry_run_trend(_rain_days("2026-10-01", [0, 0, 0, 0, 1.0, 0, 0, 0]))[2] == "shorter"
+    assert report.dry_run_trend(_rain_days("2026-10-01", [0, 0, 0, 1.0, 0, 0, 0]))[2] == "same"
+    assert report.dry_run_trend(_rain_days("2026-10-01", [0, 0, 0])) is None
+
+
+def test_stats_markdown_shows_dry_spell_trend():
+    rows = [
+        {"date": r["date"], "temp_max_c": 15.0, "temp_min_c": 8.0, "precip_mm": r["precip_mm"], "sunshine_h": 5.0}
+        for r in _rain_days("2026-10-01", [0, 0, 0, 0, 1.0, 0, 0, 0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert (
+        "- Dry spells of 3+ days: 2 (lengths 4, 3); latest **3 days** (2026-10-06 → 2026-10-08)"
+        " vs. 4 days (2026-10-01 → 2026-10-04), shorter"
+    ) in md
+    one = report.stats_markdown(rows[:4], [])
+    assert "- Dry spells of 3+ days: 1 so far, trend needs a second one" in one
