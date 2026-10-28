@@ -44,7 +44,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Wettest run by total rain: **82.9 mm** over 12 days (2026-10-16 → 2026-10-27)
 - Wet spells of 3+ days: 3; latest **6.9 mm/day** over 12 days (2026-10-16 → 2026-10-27) vs. 4.6 mm/day over 5 days (2026-10-07 → 2026-10-11), heavier
 - Dry spells of 3+ days: 2 (lengths 3, 5); latest **5 days** (2026-10-02 → 2026-10-06) vs. 3 days (2026-09-25 → 2026-09-27), longer
-- Sunshine during dry spells (avg h/day): 2026-09-25 ? 2026-09-27 9.9 h ? 2026-10-02 ? 2026-10-06 10.2 h
+- Sunshine during dry spells (avg h/day): 2026-09-25 → 2026-09-27 9.9 h · 2026-10-02 → 2026-10-06 10.2 h
 - Current run: **12 wet days in a row** since 2026-10-16
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Friday** (8.1 mm on average over 5 days)
@@ -52,7 +52,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Mildest nights by weekday: **Wednesday** (11.9 °C average min over 4 days)
 - Coldest days by weekday: **Saturday** (16.1 °C average max over 5 days)
 - Widest day/night range by weekday: **Monday** (8.6 °C average max − min over 5 days)
-- Day/night range by week: 10.0 ? 9.9 ? 7.7 ? 6.8 ? 4.6 ?C; latest week (2026-10-21 ? 2026-10-27) **4.6 ?C** vs. 10.0 ?C in the first, narrowing
+- Day/night range by week: 10.0 → 9.9 → 7.7 → 6.8 → 4.6 °C; latest week (2026-10-21 → 2026-10-27) **4.6 °C** vs. 10.0 °C in the first, narrowing
 - Dry days by weekday: Mon 2/5 · Tue 1/5 · Wed 1/4 · Thu 1/4 · Fri 2/5 · Sat 2/5 · Sun 2/5
 - Weekend vs. weekday rain: **4.5 mm/day** over 10 weekend days vs. 2.9 mm/day over 23 weekdays
 - Weekend vs. weekday sunshine: **9.3 h/day** over 10 weekend days vs. 7.2 h/day over 23 weekdays
@@ -154,4 +154,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [ ] Wet-spell sunshine: average sun hours during each wet spell of 3+ days, next to the dry ones
 - [x] Coldest weekday for days: which day of the week has the lowest average max temperature
 - [x] Day/night range by weekday: which day of the week has the widest average max − min spread
-- [ ] Day/night range trend: is the weekly average max − min spread shrinking as autumn goes on
+- [x] Day/night range trend: is the weekly average max − min spread shrinking as autumn goes on
+- [ ] Sunshine by week: weekly average sun hours to see how fast the days are getting darker

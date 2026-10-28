@@ -1177,7 +1177,7 @@ def test_stats_markdown_shows_dry_spell_sunshine():
         for r, h in zip(_rain_days("2026-10-01", [0, 0, 0, 1.0, 0, 0, 0]), [6.0, 8.0, 10.0, 1.0, 4.0, 5.0, 6.0])
     ]
     md = report.stats_markdown(rows, [])
-    assert "- Sunshine during dry spells (avg h/day): 2026-10-01 ? 2026-10-03 8.0 h ? 2026-10-05 ? 2026-10-07 5.0 h" in md
+    assert "- Sunshine during dry spells (avg h/day): 2026-10-01 → 2026-10-03 8.0 h · 2026-10-05 → 2026-10-07 5.0 h" in md
 
 
 def _spread_days(start: str, spreads: list) -> list[dict]:
@@ -1207,6 +1207,6 @@ def test_weekly_range_trend_blocks_back_from_latest_day():
 def test_stats_markdown_shows_weekly_range_trend():
     md = report.stats_markdown(_spread_days("2026-10-01", [8.0] * 7 + [5.0] * 7), [])
     assert (
-        "- Day/night range by week: 8.0 ? 5.0 ?C; latest week (2026-10-08 ? 2026-10-14) **5.0 ?C** vs. 8.0 ?C in the first, narrowing"
+        "- Day/night range by week: 8.0 → 5.0 °C; latest week (2026-10-08 → 2026-10-14) **5.0 °C** vs. 8.0 °C in the first, narrowing"
         in md
     )

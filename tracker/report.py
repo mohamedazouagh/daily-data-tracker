@@ -799,12 +799,12 @@ def widest_range_weekday(rows: list[dict]) -> tuple[str, float, int] | None:
 
 
 def weekly_range_trend(rows: list[dict], window: int = 7, min_days: int = 4) -> list[tuple[str, str, float]]:
-    """Average day/night spread (max ? min) per block of ``window`` calendar days, oldest first.
+    """Average day/night spread (max − min) per block of ``window`` calendar days, oldest first.
 
     Blocks are counted back from the latest stored day, so the newest block is
     always the latest week. Only days with both temperatures count, and a block
     needs at least ``min_days`` of them (a short oldest block is dropped).
-    Each entry is (first date, last date, mean spread ?C).
+    Each entry is (first date, last date, mean spread °C).
     """
     spreads: dict[date, float] = {}
     for r in rows:
@@ -1056,7 +1056,7 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append("- Dry spells of 3+ days: 1 so far, trend needs a second one")
         dry_sun = [s for s in dry_spell_sunshine(weather) if s[3] is not None]
         if dry_sun:
-            parts = " ? ".join(f"{f} ? {l} {h:.1f} h" for f, l, _, h in dry_sun)
+            parts = " · ".join(f"{f} → {l} {h:.1f} h" for f, l, _, h in dry_sun)
             lines.append(f"- Sunshine during dry spells (avg h/day): {parts}")
         run = current_rain_run(weather)
         if run:
@@ -1094,8 +1094,8 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         verdict = range_trend_verdict(weeks)
         if verdict:
             lines.append(
-                f"- Day/night range by week: {' ? '.join(f'{w[2]:.1f}' for w in weeks)} ?C;"
-                f" latest week ({weeks[-1][0]} ? {weeks[-1][1]}) **{weeks[-1][2]:.1f} ?C** vs. {weeks[0][2]:.1f} ?C in the first, {verdict}"
+                f"- Day/night range by week: {' → '.join(f'{w[2]:.1f}' for w in weeks)} °C;"
+                f" latest week ({weeks[-1][0]} → {weeks[-1][1]}) **{weeks[-1][2]:.1f} °C** vs. {weeks[0][2]:.1f} °C in the first, {verdict}"
             )
         dry = dry_share_by_weekday(weather)
         if dry:
