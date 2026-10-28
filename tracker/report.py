@@ -381,6 +381,21 @@ def dry_run_trend(rows: list[dict], min_days: int = 3) -> tuple[tuple, tuple, st
     return latest, prev, verdict
 
 
+def dry_spell_sunshine(rows: list[dict], min_days: int = 3) -> list[tuple[str, str, int, float | None]]:
+    """Average sunshine hours during each dry spell of at least ``min_days``, oldest first.
+
+    Spells come from ``dry_runs``. Each entry is (first date, last date, days,
+    mean sun h); days without a sunshine value are skipped in the mean, and a
+    spell where none of its days has one gets None.
+    """
+    by_date = {r["date"]: _value(r, "sunshine_h") for r in rows}
+    out: list[tuple[str, str, int, float | None]] = []
+    for first, last, n in dry_runs(rows, min_days):
+        sun = [v for d, v in by_date.items() if first <= d <= last and v is not None]
+        out.append((first, last, n, mean(sun) if sun else None))
+    return out
+
+
 def current_rain_run(rows: list[dict]) -> tuple[str, int, str] | None:
     """The ongoing dry or wet run up to the latest stored day.
 
@@ -1004,6 +1019,10 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             )
         elif dry_spells:
             lines.append("- Dry spells of 3+ days: 1 so far, trend needs a second one")
+        dry_sun = [s for s in dry_spell_sunshine(weather) if s[3] is not None]
+        if dry_sun:
+            parts = " ? ".join(f"{f} ? {l} {h:.1f} h" for f, l, _, h in dry_sun)
+            lines.append(f"- Sunshine during dry spells (avg h/day): {parts}")
         run = current_rain_run(weather)
         if run:
             kind, n, first = run
