@@ -1178,3 +1178,35 @@ def test_stats_markdown_shows_dry_spell_sunshine():
     ]
     md = report.stats_markdown(rows, [])
     assert "- Sunshine during dry spells (avg h/day): 2026-10-01 ? 2026-10-03 8.0 h ? 2026-10-05 ? 2026-10-07 5.0 h" in md
+
+
+def _spread_days(start: str, spreads: list) -> list[dict]:
+    d0 = date.fromisoformat(start)
+    return [
+        {"date": (d0 + timedelta(days=i)).isoformat(), "temp_max_c": "" if s is None else 10.0 + s,
+         "temp_min_c": 10.0, "precip_mm": 0.0, "sunshine_h": 5.0}
+        for i, s in enumerate(spreads)
+    ]
+
+
+def test_weekly_range_trend_blocks_back_from_latest_day():
+    # 17 days: 3 leftover days (dropped, under min_days), then two full weeks
+    rows = _spread_days("2026-10-01", [9.0, 9.0, 9.0] + [8.0] * 7 + [4.0, 6.0, None, 5.0, 5.0, 5.0, 5.0])
+    weeks = report.weekly_range_trend(rows)
+    assert [(w[0], w[1]) for w in weeks] == [("2026-10-04", "2026-10-10"), ("2026-10-11", "2026-10-17")]
+    assert weeks[0][2] == 8.0
+    assert weeks[1][2] == 5.0  # the day without a max is skipped
+    assert report.range_trend_verdict(weeks) == "narrowing"
+    assert report.weekly_range_trend(rows, min_days=3)[0] == ("2026-09-27", "2026-10-03", 9.0)
+    assert report.range_trend_verdict(report.weekly_range_trend(_spread_days("2026-10-01", [4.0] * 7 + [6.0] * 7))) == "widening"
+    assert report.range_trend_verdict(report.weekly_range_trend(_spread_days("2026-10-01", [4.0] * 14))) == "flat"
+    assert report.range_trend_verdict(report.weekly_range_trend(_spread_days("2026-10-01", [4.0] * 7))) is None
+    assert report.weekly_range_trend([]) == []
+
+
+def test_stats_markdown_shows_weekly_range_trend():
+    md = report.stats_markdown(_spread_days("2026-10-01", [8.0] * 7 + [5.0] * 7), [])
+    assert (
+        "- Day/night range by week: 8.0 ? 5.0 ?C; latest week (2026-10-08 ? 2026-10-14) **5.0 ?C** vs. 8.0 ?C in the first, narrowing"
+        in md
+    )

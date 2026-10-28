@@ -52,6 +52,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Mildest nights by weekday: **Wednesday** (11.9 °C average min over 4 days)
 - Coldest days by weekday: **Saturday** (16.1 °C average max over 5 days)
 - Widest day/night range by weekday: **Monday** (8.6 °C average max − min over 5 days)
+- Day/night range by week: 10.0 ? 9.9 ? 7.7 ? 6.8 ? 4.6 ?C; latest week (2026-10-21 ? 2026-10-27) **4.6 ?C** vs. 10.0 ?C in the first, narrowing
 - Dry days by weekday: Mon 2/5 · Tue 1/5 · Wed 1/4 · Thu 1/4 · Fri 2/5 · Sat 2/5 · Sun 2/5
 - Weekend vs. weekday rain: **4.5 mm/day** over 10 weekend days vs. 2.9 mm/day over 23 weekdays
 - Weekend vs. weekday sunshine: **9.3 h/day** over 10 weekend days vs. 7.2 h/day over 23 weekdays

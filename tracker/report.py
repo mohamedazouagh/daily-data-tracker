@@ -798,6 +798,41 @@ def widest_range_weekday(rows: list[dict]) -> tuple[str, float, int] | None:
     return WEEKDAYS[best], mean(by_weekday[best]), len(by_weekday[best])
 
 
+def weekly_range_trend(rows: list[dict], window: int = 7, min_days: int = 4) -> list[tuple[str, str, float]]:
+    """Average day/night spread (max ? min) per block of ``window`` calendar days, oldest first.
+
+    Blocks are counted back from the latest stored day, so the newest block is
+    always the latest week. Only days with both temperatures count, and a block
+    needs at least ``min_days`` of them (a short oldest block is dropped).
+    Each entry is (first date, last date, mean spread ?C).
+    """
+    spreads: dict[date, float] = {}
+    for r in rows:
+        hi, lo = _value(r, "temp_max_c"), _value(r, "temp_min_c")
+        if hi is not None and lo is not None:
+            spreads[date.fromisoformat(r["date"])] = hi - lo
+    if not spreads:
+        return []
+    earliest = min(spreads)
+    out: list[tuple[str, str, float]] = []
+    end = max(spreads)
+    while end >= earliest:
+        start = end - timedelta(days=window - 1)
+        vals = [v for d, v in spreads.items() if start <= d <= end]
+        if len(vals) >= min_days:
+            out.append((start.isoformat(), end.isoformat(), mean(vals)))
+        end = start - timedelta(days=1)
+    return out[::-1]
+
+
+def range_trend_verdict(weeks: list[tuple[str, str, float]]) -> str | None:
+    """"narrowing" / "widening" / "flat" comparing the latest week's spread with the first one."""
+    if len(weeks) < 2:
+        return None
+    a, b = round(weeks[-1][2], 6), round(weeks[0][2], 6)
+    return "narrowing" if a < b else "widening" if a > b else "flat"
+
+
 def weekend_vs_weekday_rain(rows: list[dict]) -> tuple[float, int, float, int] | None:
     """Average rain on Saturdays/Sundays vs. Monday–Friday.
 
@@ -1054,6 +1089,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         if wr:
             lines.append(
                 f"- Widest day/night range by weekday: **{wr[0]}** ({wr[1]:.1f} °C average max − min over {wr[2]} day{'s' if wr[2] != 1 else ''})"
+            )
+        weeks = weekly_range_trend(weather)
+        verdict = range_trend_verdict(weeks)
+        if verdict:
+            lines.append(
+                f"- Day/night range by week: {' ? '.join(f'{w[2]:.1f}' for w in weeks)} ?C;"
+                f" latest week ({weeks[-1][0]} ? {weeks[-1][1]}) **{weeks[-1][2]:.1f} ?C** vs. {weeks[0][2]:.1f} ?C in the first, {verdict}"
             )
         dry = dry_share_by_weekday(weather)
         if dry:
