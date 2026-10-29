@@ -1180,6 +1180,31 @@ def test_stats_markdown_shows_dry_spell_sunshine():
     assert "- Sunshine during dry spells (avg h/day): 2026-10-01 → 2026-10-03 8.0 h · 2026-10-05 → 2026-10-07 5.0 h" in md
 
 
+def test_wet_spell_sunshine_averages_sun_per_spell_and_skips_missing():
+    rows = _rain_days("2026-10-01", [2.0, 1.0, 3.0, 0, 1.0, 4.0, 0.5, 2.0, 0, 1.0, 1.0])
+    sun = [1.0, 2.0, 3.0, 9.0, 4.0, None, 2.0, 6.0, 9.0, 1.0, 1.0]
+    for r, h in zip(rows, sun):
+        r["sunshine_h"] = h
+    assert report.wet_spell_sunshine(rows) == [
+        ("2026-10-01", "2026-10-03", 3, 2.0),
+        ("2026-10-05", "2026-10-08", 4, 4.0),  # the missing day is left out of the mean
+    ]  # the closing 2-day run is too short to count
+    for r in rows[:3]:
+        r["sunshine_h"] = None
+    assert report.wet_spell_sunshine(rows)[0][3] is None
+    assert report.wet_spell_sunshine(_rain_days("2026-10-01", [0, 1.0, 1.0])) == []
+
+
+def test_stats_markdown_shows_wet_spell_sunshine():
+    rows = [
+        {"date": r["date"], "temp_max_c": 15.0, "temp_min_c": 8.0, "precip_mm": r["precip_mm"], "sunshine_h": h}
+        for r, h in zip(_rain_days("2026-10-01", [1.0, 2.0, 3.0, 0, 1.0]), [1.0, 2.0, 6.0, 9.0, 4.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Sunshine during wet spells (avg h/day): 2026-10-01 → 2026-10-03 3.0 h" in md
+    assert "Sunshine during dry spells" not in md
+
+
 def _spread_days(start: str, spreads: list) -> list[dict]:
     d0 = date.fromisoformat(start)
     return [
