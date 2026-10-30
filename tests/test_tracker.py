@@ -1205,6 +1205,42 @@ def test_stats_markdown_shows_wet_spell_sunshine():
     assert "Sunshine during dry spells" not in md
 
 
+def test_spell_sunshine_gap_pools_days_across_spells():
+    # wet 3 days, dry 3 days, wet 1 day (too short), dry 4 days with one missing sun value
+    rows = _rain_days("2026-10-01", [1.0, 2.0, 3.0, 0, 0, 0, 5.0, 0, 0, 0, 0])
+    sun = [1.0, 2.0, 3.0, 8.0, 9.0, 10.0, 0.5, 6.0, None, 6.0, 6.0]
+    for r, h in zip(rows, sun):
+        r["sunshine_h"] = h
+    dry_avg, dry_n, wet_avg, wet_n, gap = report.spell_sunshine_gap(rows)
+    assert dry_n == 6 and wet_n == 3  # the 1-day wet run and the missing day stay out
+    assert dry_avg == 7.5 and wet_avg == 2.0 and gap == 5.5
+    # day-weighted: a 3-day dry spell at 9 h and a 6-day one at 3 h pool to 5 h, not the 6 h mean of spell means
+    rows2 = _rain_days("2026-10-01", [1.0] * 3 + [0] * 3 + [1.0] * 3 + [0] * 6)
+    for r, h in zip(rows2, [2.0] * 3 + [9.0] * 3 + [2.0] * 3 + [3.0] * 6):
+        r["sunshine_h"] = h
+    assert report.spell_sunshine_gap(rows2) == (5.0, 9, 2.0, 6, 3.0)
+
+
+def test_spell_sunshine_gap_needs_both_kinds():
+    rows = _rain_days("2026-10-01", [1.0, 1.0, 1.0, 0, 1.0])
+    for r in rows:
+        r["sunshine_h"] = 4.0
+    assert report.spell_sunshine_gap(rows) is None
+    assert report.spell_sunshine_gap([]) is None
+
+
+def test_stats_markdown_shows_spell_sunshine_gap():
+    rows = [
+        {"date": r["date"], "temp_max_c": 15.0, "temp_min_c": 8.0, "precip_mm": r["precip_mm"], "sunshine_h": h}
+        for r, h in zip(_rain_days("2026-10-01", [1.0, 2.0, 3.0, 0, 0, 0]), [1.0, 2.0, 3.0, 8.0, 9.0, 10.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert (
+        "- Dry vs. wet spell sunshine: **+7.0 h/day** (9.0 h over 3 dry-spell days vs. 2.0 h over 3 wet-spell days)"
+        in md
+    )
+
+
 def _spread_days(start: str, spreads: list) -> list[dict]:
     d0 = date.fromisoformat(start)
     return [

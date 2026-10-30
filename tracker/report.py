@@ -411,6 +411,28 @@ def wet_spell_sunshine(rows: list[dict], min_days: int = 3) -> list[tuple[str, s
     return out
 
 
+def spell_sunshine_gap(rows: list[dict], min_days: int = 3) -> tuple[float, int, float, int, float] | None:
+    """How many more sun hours a day the dry spells get than the wet spells.
+
+    Pools every day that sits inside a dry spell (from ``dry_runs``) and every
+    day inside a wet spell (from ``wet_runs``), both of at least ``min_days``,
+    so a long spell weighs more than a short one. Days without a sunshine value
+    are skipped. Returns (dry mean, dry days, wet mean, wet days, dry - wet), or
+    None until both kinds of spell have at least one day with sunshine.
+    """
+    by_date = {r["date"]: _value(r, "sunshine_h") for r in rows}
+
+    def pooled(spans) -> list[float]:
+        return [v for d, v in by_date.items() if v is not None and any(f <= d <= l for f, l in spans)]
+
+    dry = pooled([(f, l) for f, l, _ in dry_runs(rows, min_days)])
+    wet = pooled([(f, l) for f, l, _, _ in wet_runs(rows, min_days)])
+    if not dry or not wet:
+        return None
+    dry_avg, wet_avg = mean(dry), mean(wet)
+    return dry_avg, len(dry), wet_avg, len(wet), dry_avg - wet_avg
+
+
 def current_rain_run(rows: list[dict]) -> tuple[str, int, str] | None:
     """The ongoing dry or wet run up to the latest stored day.
 
@@ -1077,6 +1099,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         if wet_sun:
             parts = " · ".join(f"{f} → {l} {h:.1f} h" for f, l, _, h in wet_sun)
             lines.append(f"- Sunshine during wet spells (avg h/day): {parts}")
+        sun_gap = spell_sunshine_gap(weather)
+        if sun_gap:
+            dry_avg, dry_n, wet_avg, wet_n, gap = sun_gap
+            lines.append(
+                f"- Dry vs. wet spell sunshine: **{gap:+.1f} h/day** "
+                f"({dry_avg:.1f} h over {dry_n} dry-spell days vs. {wet_avg:.1f} h over {wet_n} wet-spell days)"
+            )
         run = current_rain_run(weather)
         if run:
             kind, n, first = run
