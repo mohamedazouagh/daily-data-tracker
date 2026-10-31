@@ -433,6 +433,36 @@ def spell_sunshine_gap(rows: list[dict], min_days: int = 3) -> tuple[float, int,
     return dry_avg, len(dry), wet_avg, len(wet), dry_avg - wet_avg
 
 
+def spell_temperature_gap(
+    rows: list[dict], min_days: int = 3
+) -> tuple[tuple[float, float, float], tuple[float, float, float], int, int] | None:
+    """Are dry spells warmer by day and colder at night than wet spells?
+
+    Pools every day inside a dry spell (``dry_runs``) and inside a wet spell
+    (``wet_runs``) of at least ``min_days``, day-weighted like
+    ``spell_sunshine_gap``. Only days with both a max and a min temperature
+    count, so both averages cover the same days. Returns
+    ((dry max, wet max, max gap), (dry min, wet min, min gap), dry days, wet days)
+    with gaps as dry - wet, or None until both kinds of spell have such a day.
+    """
+    temps = {}
+    for r in rows:
+        hi, lo = _value(r, "temp_max_c"), _value(r, "temp_min_c")
+        if hi is not None and lo is not None:
+            temps[r["date"]] = (hi, lo)
+
+    def pooled(spans) -> list[tuple[float, float]]:
+        return [t for d, t in temps.items() if any(f <= d <= l for f, l in spans)]
+
+    dry = pooled([(f, l) for f, l, _ in dry_runs(rows, min_days)])
+    wet = pooled([(f, l) for f, l, _, _ in wet_runs(rows, min_days)])
+    if not dry or not wet:
+        return None
+    dry_hi, wet_hi = mean(t[0] for t in dry), mean(t[0] for t in wet)
+    dry_lo, wet_lo = mean(t[1] for t in dry), mean(t[1] for t in wet)
+    return (dry_hi, wet_hi, dry_hi - wet_hi), (dry_lo, wet_lo, dry_lo - wet_lo), len(dry), len(wet)
+
+
 def current_rain_run(rows: list[dict]) -> tuple[str, int, str] | None:
     """The ongoing dry or wet run up to the latest stored day.
 
@@ -1105,6 +1135,14 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(
                 f"- Dry vs. wet spell sunshine: **{gap:+.1f} h/day** "
                 f"({dry_avg:.1f} h over {dry_n} dry-spell days vs. {wet_avg:.1f} h over {wet_n} wet-spell days)"
+            )
+        temp_gap = spell_temperature_gap(weather)
+        if temp_gap:
+            (dry_hi, wet_hi, hi_gap), (dry_lo, wet_lo, lo_gap), dry_n, wet_n = temp_gap
+            lines.append(
+                f"- Dry vs. wet spell temperature: days **{hi_gap:+.1f} °C** ({dry_hi:.1f} vs. {wet_hi:.1f} °C max), "
+                f"nights **{lo_gap:+.1f} °C** ({dry_lo:.1f} vs. {wet_lo:.1f} °C min) "
+                f"over {dry_n} dry-spell and {wet_n} wet-spell days"
             )
         run = current_rain_run(weather)
         if run:

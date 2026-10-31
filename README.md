@@ -47,6 +47,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Sunshine during dry spells (avg h/day): 2026-09-25 → 2026-09-27 9.9 h · 2026-10-02 → 2026-10-06 10.2 h
 - Sunshine during wet spells (avg h/day): 2026-09-28 → 2026-10-01 7.5 h · 2026-10-07 → 2026-10-11 8.1 h · 2026-10-16 → 2026-10-27 5.9 h
 - Dry vs. wet spell sunshine: **+3.4 h/day** (10.1 h over 8 dry-spell days vs. 6.7 h over 21 wet-spell days)
+- Dry vs. wet spell temperature: days **+4.6 °C** (20.8 vs. 16.2 °C max), nights **-0.4 °C** (9.8 vs. 10.2 °C min) over 8 dry-spell and 21 wet-spell days
 - Current run: **1 dry day in a row**
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Friday** (6.8 mm on average over 6 days)
@@ -155,7 +156,8 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Dry-spell sunshine: average sun hours during each dry spell of 3+ days
 - [x] Wet-spell sunshine: average sun hours during each wet spell of 3+ days, next to the dry ones
 - [x] Dry vs. wet spell sunshine gap: how many more sun hours a day the dry spells get on average
-- [ ] Dry vs. wet spell temperature: are dry spells warmer by day and colder at night than wet ones
+- [x] Dry vs. wet spell temperature: are dry spells warmer by day and colder at night than wet ones
+- [ ] Dry vs. wet spell temperature history: does the night-time gap grow as autumn nights get longer
 - [x] Coldest weekday for days: which day of the week has the lowest average max temperature
 - [x] Day/night range by weekday: which day of the week has the widest average max − min spread
 - [x] Day/night range trend: is the weekly average max − min spread shrinking as autumn goes on

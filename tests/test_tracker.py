@@ -1271,3 +1271,41 @@ def test_stats_markdown_shows_weekly_range_trend():
         "- Day/night range by week: 8.0 → 5.0 °C; latest week (2026-10-08 → 2026-10-14) **5.0 °C** vs. 8.0 °C in the first, narrowing"
         in md
     )
+
+
+def _temp_days(start: str, days: list) -> list[dict]:
+    d0 = date.fromisoformat(start)
+    return [
+        {"date": (d0 + timedelta(days=i)).isoformat(), "precip_mm": mm,
+         "temp_max_c": "" if hi is None else hi, "temp_min_c": "" if lo is None else lo}
+        for i, (mm, hi, lo) in enumerate(days)
+    ]
+
+
+def test_spell_temperature_gap_pools_days_with_both_temperatures():
+    rows = _temp_days("2026-10-01", [
+        (2.0, 12.0, 9.0), (1.0, 13.0, 10.0), (3.0, 14.0, 11.0),   # wet spell
+        (0, 18.0, 4.0), (0, 20.0, 6.0), (0, None, 5.0), (0, 22.0, 2.0),  # dry spell, one day missing max
+        (5.0, 30.0, 20.0),                                       # 1-day wet run: too short
+    ])
+    (dry_hi, wet_hi, hi_gap), (dry_lo, wet_lo, lo_gap), dry_n, wet_n = report.spell_temperature_gap(rows)
+    assert (dry_n, wet_n) == (3, 3)
+    assert (dry_hi, wet_hi, hi_gap) == (20.0, 13.0, 7.0)
+    assert (dry_lo, wet_lo, lo_gap) == (4.0, 10.0, -6.0)
+
+
+def test_spell_temperature_gap_needs_both_kinds():
+    rows = _temp_days("2026-10-01", [(0, 15.0, 5.0)] * 4)
+    assert report.spell_temperature_gap(rows) is None
+    assert report.spell_temperature_gap([]) is None
+
+
+def test_stats_markdown_shows_spell_temperature_gap():
+    rows = _temp_days("2026-10-01", [(1.0, 12.0, 9.0)] * 3 + [(0, 18.0, 5.0)] * 3)
+    for r in rows:
+        r["sunshine_h"] = 5.0
+    md = report.stats_markdown(rows, [])
+    assert (
+        "- Dry vs. wet spell temperature: days **+6.0 °C** (18.0 vs. 12.0 °C max), "
+        "nights **-4.0 °C** (5.0 vs. 9.0 °C min) over 3 dry-spell and 3 wet-spell days"
+    ) in md
