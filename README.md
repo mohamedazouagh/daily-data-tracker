@@ -23,17 +23,17 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 ## Stats
 
 <!-- stats:start -->
-**Days tracked:** 36 weather · 26 FX
+**Days tracked:** 37 weather · 26 FX
 
-- Average max temperature: **17.3 °C**
-- Warmest day: **26.2 °C** · Coldest max: **11.6 °C**
-- Last 7 days vs. the 7 before (avg max): **13.8 °C** vs. 13.2 °C (+0.5 °C)
-- Total rain: **112.1 mm** · Dry days: **13**
+- Average max temperature: **17.1 °C**
+- Warmest day: **26.2 °C** · Coldest max: **8.9 °C**
+- Last 7 days vs. the 7 before (avg max): **13.3 °C** vs. 13.0 °C (+0.3 °C)
+- Total rain: **112.1 mm** · Dry days: **14**
 - Coldest night: **4.8 °C** on 2026-10-12
 - First frost (min below 0 °C): none yet
 - Warmest night: **17.8 °C** on 2026-09-30
 - Largest day/night range: **13.4 °C** on 2026-09-25
-- Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **7.9 h/day**
+- Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **7.8 h/day**
 - Wettest day: **28.7 mm** on 2026-10-23
 - Wettest day's share of all rain: **26%** (28.7 mm on 2026-10-23)
 - Share of rain from the 3 wettest days: **54%** (2026-10-23 28.7 mm, 2026-10-24 20.4 mm, 2026-10-25 11.0 mm)
@@ -48,32 +48,32 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Sunshine during wet spells (avg h/day): 2026-09-28 → 2026-10-01 7.5 h · 2026-10-07 → 2026-10-11 8.1 h · 2026-10-16 → 2026-10-27 5.9 h
 - Dry vs. wet spell sunshine: **+3.4 h/day** (10.1 h over 8 dry-spell days vs. 6.7 h over 21 wet-spell days)
 - Dry vs. wet spell temperature: days **+4.6 °C** (20.8 vs. 16.2 °C max), nights **-0.4 °C** (9.8 vs. 10.2 °C min) over 8 dry-spell and 21 wet-spell days
-- Current run: **1 dry day in a row**
+- Current run: **2 dry days in a row** since 2026-10-30
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Friday** (6.8 mm on average over 6 days)
 - Sunniest weekday so far: **Sunday** (9.9 h on average over 5 days)
 - Mildest nights by weekday: **Tuesday** (11.1 °C average min over 5 days)
-- Coldest days by weekday: **Saturday** (16.1 °C average max over 5 days)
+- Coldest days by weekday: **Saturday** (14.9 °C average max over 6 days)
 - Widest day/night range by weekday: **Monday** (8.6 °C average max − min over 5 days)
-- Day/night range by week: 8.4 → 10.0 → 7.7 → 5.4 → 5.5 °C; latest week (2026-10-24 → 2026-10-30) **5.5 °C** vs. 8.4 °C in the first, narrowing
-- Dry days by weekday: Mon 2/5 · Tue 1/5 · Wed 2/5 · Thu 1/5 · Fri 3/6 · Sat 2/5 · Sun 2/5
-- Weekend vs. weekday rain: **4.5 mm/day** over 10 weekend days vs. 2.6 mm/day over 26 weekdays
-- Weekend vs. weekday sunshine: **9.3 h/day** over 10 weekend days vs. 7.4 h/day over 26 weekdays
-- Weekend vs. weekday max temperature: **16.2 °C** over 10 weekend days vs. 17.8 °C over 26 weekdays (-1.6 °C)
-- Weekend vs. weekday night (min) temperature: **9.1 °C** over 10 weekend days vs. 10.0 °C over 26 weekdays (-0.9 °C)
-- Rain vs. sunshine correlation: **r = -0.29**
+- Day/night range by week: 8.9 → 9.0 → 7.8 → 5.0 → 5.5 °C; latest week (2026-10-25 → 2026-10-31) **5.5 °C** vs. 8.9 °C in the first, narrowing
+- Dry days by weekday: Mon 2/5 · Tue 1/5 · Wed 2/5 · Thu 1/5 · Fri 3/6 · Sat 3/6 · Sun 2/5
+- Weekend vs. weekday rain: **4.1 mm/day** over 11 weekend days vs. 2.6 mm/day over 26 weekdays
+- Weekend vs. weekday sunshine: **9.0 h/day** over 11 weekend days vs. 7.4 h/day over 26 weekdays
+- Weekend vs. weekday max temperature: **15.5 °C** over 11 weekend days vs. 17.8 °C over 26 weekdays (-2.2 °C)
+- Weekend vs. weekday night (min) temperature: **8.8 °C** over 11 weekend days vs. 10.0 °C over 26 weekdays (-1.2 °C)
+- Rain vs. sunshine correlation: **r = -0.28**
 
 Last 7 days (Breda):
 
 | Date | Max °C | Min °C | Rain mm | Sun h |
 |---|---|---|---|---|
+| 2026-10-31 | 8.9 | 5.5 | 0.0 | 5.49 |
 | 2026-10-30 | 12.6 | 6.1 | 0.0 | 8.85 |
 | 2026-10-29 | 15.0 | 7.5 | 0.1 | 9.0 |
 | 2026-10-28 | 14.0 | 7.6 | 0.0 | 9.11 |
 | 2026-10-27 | 16.8 | 9.6 | 1.8 | 2.37 |
 | 2026-10-26 | 12.4 | 7.7 | 0.7 | 3.76 |
 | 2026-10-25 | 13.3 | 10.4 | 11.0 | 9.18 |
-| 2026-10-24 | 12.2 | 8.9 | 20.4 | 6.48 |
 
 Latest EUR rates (2026-10-30): USD 1.1172 · GBP 0.8338 · CHF 0.9194 · TRY 55.8015
 
