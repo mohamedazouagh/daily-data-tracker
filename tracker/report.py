@@ -878,18 +878,47 @@ def weekly_range_trend(rows: list[dict], window: int = 7, min_days: int = 4) -> 
         hi, lo = _value(r, "temp_max_c"), _value(r, "temp_min_c")
         if hi is not None and lo is not None:
             spreads[date.fromisoformat(r["date"])] = hi - lo
-    if not spreads:
+    return _weekly_blocks(spreads, window, min_days)
+
+
+def _weekly_blocks(values: dict[date, float], window: int, min_days: int) -> list[tuple[str, str, float]]:
+    """Mean of ``values`` per block of ``window`` calendar days, counted back from the latest day."""
+    if not values:
         return []
-    earliest = min(spreads)
+    earliest = min(values)
     out: list[tuple[str, str, float]] = []
-    end = max(spreads)
+    end = max(values)
     while end >= earliest:
         start = end - timedelta(days=window - 1)
-        vals = [v for d, v in spreads.items() if start <= d <= end]
+        vals = [v for d, v in values.items() if start <= d <= end]
         if len(vals) >= min_days:
             out.append((start.isoformat(), end.isoformat(), mean(vals)))
         end = start - timedelta(days=1)
     return out[::-1]
+
+
+def weekly_sunshine_trend(rows: list[dict], window: int = 7, min_days: int = 4) -> list[tuple[str, str, float]]:
+    """Average sun hours per block of ``window`` calendar days, oldest first.
+
+    Same blocks as :func:`weekly_range_trend`: counted back from the latest day
+    with a sunshine value, overcast days (0 h) count, missing values are skipped
+    and a block needs at least ``min_days`` values. Each entry is
+    (first date, last date, mean sun hours per day).
+    """
+    sun: dict[date, float] = {}
+    for r in rows:
+        v = _value(r, "sunshine_h")
+        if v is not None:
+            sun[date.fromisoformat(r["date"])] = v
+    return _weekly_blocks(sun, window, min_days)
+
+
+def sunshine_trend_verdict(weeks: list[tuple[str, str, float]]) -> str | None:
+    """"darker" / "brighter" / "flat" comparing the latest week's sun hours with the first one."""
+    if len(weeks) < 2:
+        return None
+    a, b = round(weeks[-1][2], 6), round(weeks[0][2], 6)
+    return "darker" if a < b else "brighter" if a > b else "flat"
 
 
 def range_trend_verdict(weeks: list[tuple[str, str, float]]) -> str | None:
@@ -1182,6 +1211,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(
                 f"- Day/night range by week: {' → '.join(f'{w[2]:.1f}' for w in weeks)} °C;"
                 f" latest week ({weeks[-1][0]} → {weeks[-1][1]}) **{weeks[-1][2]:.1f} °C** vs. {weeks[0][2]:.1f} °C in the first, {verdict}"
+            )
+        sweeks = weekly_sunshine_trend(weather)
+        sverdict = sunshine_trend_verdict(sweeks)
+        if sverdict:
+            lines.append(
+                f"- Sunshine by week: {' → '.join(f'{w[2]:.1f}' for w in sweeks)} h/day;"
+                f" latest week ({sweeks[-1][0]} → {sweeks[-1][1]}) **{sweeks[-1][2]:.1f} h/day** vs. {sweeks[0][2]:.1f} h in the first, {sverdict}"
             )
         dry = dry_share_by_weekday(weather)
         if dry:

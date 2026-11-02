@@ -56,6 +56,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Coldest days by weekday: **Saturday** (14.9 °C average max over 6 days)
 - Widest day/night range by weekday: **Tuesday** (8.5 °C average max − min over 5 days)
 - Day/night range by week: 9.8 → 9.9 → 8.2 → 6.9 → 4.4 → 5.6 °C; latest week (2026-10-27 → 2026-11-02) **5.6 °C** vs. 9.8 °C in the first, narrowing
+- Sunshine by week: 8.8 → 9.2 → 8.9 → 7.4 → 6.0 → 5.3 h/day; latest week (2026-10-27 → 2026-11-02) **5.3 h/day** vs. 8.8 h in the first, darker
 - Dry days by weekday: Mon 2/6 · Tue 1/5 · Wed 2/5 · Thu 1/5 · Fri 3/6 · Sat 3/6 · Sun 2/6
 - Weekend vs. weekday rain: **3.7 mm/day** over 12 weekend days vs. 2.6 mm/day over 27 weekdays
 - Weekend vs. weekday sunshine: **8.3 h/day** over 12 weekend days vs. 7.1 h/day over 27 weekdays
@@ -161,4 +162,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Coldest weekday for days: which day of the week has the lowest average max temperature
 - [x] Day/night range by weekday: which day of the week has the widest average max − min spread
 - [x] Day/night range trend: is the weekly average max − min spread shrinking as autumn goes on
-- [ ] Sunshine by week: weekly average sun hours to see how fast the days are getting darker
+- [x] Sunshine by week: weekly average sun hours to see how fast the days are getting darker
+- [ ] Sunshine by week vs. day length: share of the astronomically possible sun hours each week

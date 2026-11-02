@@ -1309,3 +1309,43 @@ def test_stats_markdown_shows_spell_temperature_gap():
         "- Dry vs. wet spell temperature: days **+6.0 °C** (18.0 vs. 12.0 °C max), "
         "nights **-4.0 °C** (5.0 vs. 9.0 °C min) over 3 dry-spell and 3 wet-spell days"
     ) in md
+
+
+def _sunny_days(start: str, hours: list) -> list[dict]:
+    d0 = date.fromisoformat(start)
+    return [
+        {"date": (d0 + timedelta(days=i)).isoformat(), "temp_max_c": 12.0, "temp_min_c": 6.0,
+         "precip_mm": 0.0, "sunshine_h": "" if h is None else h}
+        for i, h in enumerate(hours)
+    ]
+
+
+def test_weekly_sunshine_trend_blocks_back_from_latest_day_and_counts_overcast():
+    rows = _sunny_days("2026-10-01", [9.0, 9.0, 9.0] + [8.0] * 7 + [0.0, 6.0, None, 6.0, 6.0, 6.0, 6.0])
+    weeks = report.weekly_sunshine_trend(rows)
+    assert [(w[0], w[1]) for w in weeks] == [("2026-10-04", "2026-10-10"), ("2026-10-11", "2026-10-17")]
+    assert weeks[0][2] == 8.0
+    assert weeks[1][2] == 5.0  # 0 h counts, the missing day is skipped
+    assert report.sunshine_trend_verdict(weeks) == "darker"
+    assert report.weekly_sunshine_trend(rows, min_days=3)[0] == ("2026-09-27", "2026-10-03", 9.0)
+
+
+def test_sunshine_trend_verdict_labels():
+    assert report.sunshine_trend_verdict(report.weekly_sunshine_trend(_sunny_days("2026-10-01", [4.0] * 7 + [6.0] * 7))) == "brighter"
+    assert report.sunshine_trend_verdict(report.weekly_sunshine_trend(_sunny_days("2026-10-01", [4.0] * 14))) == "flat"
+    assert report.sunshine_trend_verdict(report.weekly_sunshine_trend(_sunny_days("2026-10-01", [4.0] * 7))) is None
+    assert report.weekly_sunshine_trend([]) == []
+    assert report.weekly_sunshine_trend(_sunny_days("2026-10-01", [None] * 7)) == []
+
+
+def test_weekly_range_trend_unchanged_after_refactor():
+    rows = _sunny_days("2026-10-01", [5.0] * 14)
+    assert report.weekly_range_trend(rows) == [("2026-10-01", "2026-10-07", 6.0), ("2026-10-08", "2026-10-14", 6.0)]
+
+
+def test_stats_markdown_shows_weekly_sunshine_trend():
+    md = report.stats_markdown(_sunny_days("2026-10-01", [8.0] * 7 + [5.0] * 7), [])
+    assert (
+        "- Sunshine by week: 8.0 → 5.0 h/day; latest week (2026-10-08 → 2026-10-14) **5.0 h/day** vs. 8.0 h in the first, darker"
+        in md
+    )
