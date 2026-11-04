@@ -1349,3 +1349,37 @@ def test_stats_markdown_shows_weekly_sunshine_trend():
         "- Sunshine by week: 8.0 → 5.0 h/day; latest week (2026-10-08 → 2026-10-14) **5.0 h/day** vs. 8.0 h in the first, darker"
         in md
     )
+
+
+def _weekly_nights(start: str, mins: list) -> list[dict]:
+    d0 = date.fromisoformat(start)
+    return [
+        {"date": (d0 + timedelta(days=i)).isoformat(), "temp_max_c": 12.0,
+         "temp_min_c": "" if m is None else m, "precip_mm": 0.0, "sunshine_h": 5.0}
+        for i, m in enumerate(mins)
+    ]
+
+
+def test_weekly_night_trend_blocks_back_from_latest_day_and_skips_missing():
+    rows = _weekly_nights("2026-10-01", [9.0, 9.0] + [8.0] * 7 + [4.0, None, 2.0, 3.0, -1.0, 4.0, 6.0])
+    weeks = report.weekly_night_trend(rows)
+    assert [(w[0], w[1]) for w in weeks] == [("2026-10-03", "2026-10-09"), ("2026-10-10", "2026-10-16")]
+    assert weeks[0][2] == 8.0
+    assert weeks[1][2] == 3.0  # below-zero nights count, the missing one is skipped
+    assert report.night_trend_verdict(weeks) == "colder"
+
+
+def test_night_trend_verdict_labels():
+    assert report.night_trend_verdict(report.weekly_night_trend(_weekly_nights("2026-10-01", [4.0] * 7 + [6.0] * 7))) == "milder"
+    assert report.night_trend_verdict(report.weekly_night_trend(_weekly_nights("2026-10-01", [4.0] * 14))) == "flat"
+    assert report.night_trend_verdict(report.weekly_night_trend(_weekly_nights("2026-10-01", [4.0] * 7))) is None
+    assert report.weekly_night_trend([]) == []
+    assert report.weekly_night_trend(_weekly_nights("2026-10-01", [None] * 7)) == []
+
+
+def test_stats_markdown_shows_weekly_night_trend():
+    md = report.stats_markdown(_weekly_nights("2026-10-01", [8.0] * 7 + [5.0] * 7), [])
+    assert (
+        "- Nights by week (avg min): 8.0 → 5.0 °C; latest week (2026-10-08 → 2026-10-14) **5.0 °C** vs. 8.0 °C in the first, colder"
+        in md
+    )

@@ -913,6 +913,29 @@ def weekly_sunshine_trend(rows: list[dict], window: int = 7, min_days: int = 4) 
     return _weekly_blocks(sun, window, min_days)
 
 
+def weekly_night_trend(rows: list[dict], window: int = 7, min_days: int = 4) -> list[tuple[str, str, float]]:
+    """Average night (min) temperature per block of ``window`` calendar days, oldest first.
+
+    Same blocks as :func:`weekly_range_trend`: counted back from the latest day
+    with a min temperature, missing values skipped, and a block needs at least
+    ``min_days`` values. Each entry is (first date, last date, mean min °C).
+    """
+    nights: dict[date, float] = {}
+    for r in rows:
+        v = _value(r, "temp_min_c")
+        if v is not None:
+            nights[date.fromisoformat(r["date"])] = v
+    return _weekly_blocks(nights, window, min_days)
+
+
+def night_trend_verdict(weeks: list[tuple[str, str, float]]) -> str | None:
+    """"colder" / "milder" / "flat" comparing the latest week's nights with the first one."""
+    if len(weeks) < 2:
+        return None
+    a, b = round(weeks[-1][2], 6), round(weeks[0][2], 6)
+    return "colder" if a < b else "milder" if a > b else "flat"
+
+
 def sunshine_trend_verdict(weeks: list[tuple[str, str, float]]) -> str | None:
     """"darker" / "brighter" / "flat" comparing the latest week's sun hours with the first one."""
     if len(weeks) < 2:
@@ -1218,6 +1241,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(
                 f"- Sunshine by week: {' → '.join(f'{w[2]:.1f}' for w in sweeks)} h/day;"
                 f" latest week ({sweeks[-1][0]} → {sweeks[-1][1]}) **{sweeks[-1][2]:.1f} h/day** vs. {sweeks[0][2]:.1f} h in the first, {sverdict}"
+            )
+        nweeks = weekly_night_trend(weather)
+        nverdict = night_trend_verdict(nweeks)
+        if nverdict:
+            lines.append(
+                f"- Nights by week (avg min): {' → '.join(f'{w[2]:.1f}' for w in nweeks)} °C;"
+                f" latest week ({nweeks[-1][0]} → {nweeks[-1][1]}) **{nweeks[-1][2]:.1f} °C** vs. {nweeks[0][2]:.1f} °C in the first, {nverdict}"
             )
         dry = dry_share_by_weekday(weather)
         if dry:

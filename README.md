@@ -57,6 +57,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Widest day/night range by weekday: **Tuesday** (7.9 °C average max − min over 6 days)
 - Day/night range by week: 10.0 → 9.9 → 7.7 → 6.8 → 4.6 → 5.3 °C; latest week (2026-10-28 → 2026-11-03) **5.3 °C** vs. 10.0 °C in the first, narrowing
 - Sunshine by week: 9.2 → 9.3 → 8.0 → 7.6 → 5.4 → 5.6 h/day; latest week (2026-10-28 → 2026-11-03) **5.6 h/day** vs. 9.2 h in the first, darker
+- Nights by week (avg min): 12.5 → 11.2 → 9.5 → 8.6 → 9.0 → 6.4 °C; latest week (2026-10-28 → 2026-11-03) **6.4 °C** vs. 12.5 °C in the first, colder
 - Dry days by weekday: Mon 2/6 · Tue 1/6 · Wed 2/5 · Thu 1/5 · Fri 3/6 · Sat 3/6 · Sun 2/6
 - Weekend vs. weekday rain: **3.7 mm/day** over 12 weekend days vs. 2.5 mm/day over 28 weekdays
 - Weekend vs. weekday sunshine: **8.3 h/day** over 12 weekend days vs. 7.0 h/day over 28 weekdays
@@ -164,3 +165,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Day/night range trend: is the weekly average max − min spread shrinking as autumn goes on
 - [x] Sunshine by week: weekly average sun hours to see how fast the days are getting darker
 - [ ] Sunshine by week vs. day length: share of the astronomically possible sun hours each week
+- [x] Nights by week: weekly average min temperature to see how fast the nights are cooling
+- [ ] Week of the first frost-risk night (min below 3 °C) once nights keep dropping
