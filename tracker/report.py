@@ -1,8 +1,11 @@
 """Build the README stats block and a tiny SVG sparkline from the stored CSVs."""
 from __future__ import annotations
 
+import math
 from datetime import date, timedelta
 from statistics import correlation, mean, stdev
+
+from tracker.sources import BREDA
 
 
 def _floats(rows: list[dict], key: str) -> list[float]:
@@ -949,6 +952,50 @@ def weekly_night_trend(rows: list[dict], window: int = 7, min_days: int = 4) -> 
     return _weekly_blocks(nights, window, min_days)
 
 
+def day_length_hours(day: date, latitude: float = BREDA["latitude"]) -> float:
+    """Astronomical daylight (sunrise to sunset) in hours for ``day`` at ``latitude``.
+
+    Uses the solar declination approximation and the standard -0.833° sun
+    altitude for sunrise/sunset (refraction + solar disc). Accurate to a few
+    minutes, which is plenty for a sunshine share. Polar day/night clamp to 24/0 h.
+    """
+    n = day.timetuple().tm_yday
+    decl = math.radians(-23.44) * math.cos(2 * math.pi / 365 * (n + 10))
+    phi = math.radians(latitude)
+    cos_w = (math.sin(math.radians(-0.833)) - math.sin(phi) * math.sin(decl)) / (math.cos(phi) * math.cos(decl))
+    cos_w = max(-1.0, min(1.0, cos_w))
+    return 2 * math.degrees(math.acos(cos_w)) / 15
+
+
+def weekly_sunshine_share(
+    rows: list[dict], latitude: float = BREDA["latitude"], window: int = 7, min_days: int = 4
+) -> list[tuple[str, str, float]]:
+    """Share of the astronomically possible sun hours actually measured, per week, oldest first.
+
+    Each day's sunshine is divided by its daylight length (see
+    :func:`day_length_hours`); the block value is the mean of those daily
+    shares (0..1). Same blocks as :func:`weekly_sunshine_trend`, so falling
+    shares mean cloudier weeks, not just shorter days.
+    """
+    shares: dict[date, float] = {}
+    for r in rows:
+        v = _value(r, "sunshine_h")
+        if v is not None:
+            d = date.fromisoformat(r["date"])
+            possible = day_length_hours(d, latitude)
+            if possible > 0:
+                shares[d] = min(v / possible, 1.0)
+    return _weekly_blocks(shares, window, min_days)
+
+
+def sunshine_share_verdict(weeks: list[tuple[str, str, float]]) -> str | None:
+    """"cloudier" / "clearer" / "flat" comparing the latest week's sunshine share with the first one."""
+    if len(weeks) < 2:
+        return None
+    a, b = round(weeks[-1][2], 6), round(weeks[0][2], 6)
+    return "cloudier" if a < b else "clearer" if a > b else "flat"
+
+
 def night_trend_verdict(weeks: list[tuple[str, str, float]]) -> str | None:
     """"colder" / "milder" / "flat" comparing the latest week's nights with the first one."""
     if len(weeks) < 2:
@@ -1269,6 +1316,14 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(
                 f"- Sunshine by week: {' → '.join(f'{w[2]:.1f}' for w in sweeks)} h/day;"
                 f" latest week ({sweeks[-1][0]} → {sweeks[-1][1]}) **{sweeks[-1][2]:.1f} h/day** vs. {sweeks[0][2]:.1f} h in the first, {sverdict}"
+            )
+        shweeks = weekly_sunshine_share(weather)
+        shverdict = sunshine_share_verdict(shweeks)
+        if shverdict:
+            lines.append(
+                f"- Sunshine as share of daylight by week: {' → '.join(f'{w[2]:.0%}' for w in shweeks)};"
+                f" latest week ({shweeks[-1][0]} → {shweeks[-1][1]}) **{shweeks[-1][2]:.0%}** of possible sun"
+                f" vs. {shweeks[0][2]:.0%} in the first, {shverdict}"
             )
         nweeks = weekly_night_trend(weather)
         nverdict = night_trend_verdict(nweeks)

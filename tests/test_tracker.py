@@ -1397,3 +1397,31 @@ def test_stats_markdown_shows_frost_risk_night():
     assert "- First frost-risk night (min below 3 °C): **2.5 °C** on 2026-11-03 (week 45), 1 such night so far" in md
     md = report.stats_markdown(_weekly_nights("2026-11-02", [5.0, 4.0]), [])
     assert "- First frost-risk night (min below 3 °C): none yet" in md
+
+
+def test_day_length_hours_matches_known_breda_values():
+    assert abs(report.day_length_hours(date(2026, 6, 21)) - 16.6) < 0.2
+    assert abs(report.day_length_hours(date(2026, 12, 21)) - 7.9) < 0.2
+    assert abs(report.day_length_hours(date(2026, 3, 20)) - 12.1) < 0.2
+    assert report.day_length_hours(date(2026, 12, 21), latitude=80.0) == 0.0
+    assert report.day_length_hours(date(2026, 6, 21), latitude=80.0) == 24.0
+
+
+def test_weekly_sunshine_share_divides_by_daylight_and_caps():
+    rows = _sunny_days("2026-10-01", [None] + [0.0] * 6 + [100.0] * 7)
+    weeks = report.weekly_sunshine_share(rows)
+    assert weeks[0][2] == 0.0
+    assert weeks[1][2] == 1.0  # impossible readings are capped at 100%
+    assert report.sunshine_share_verdict(weeks) == "clearer"
+    assert report.weekly_sunshine_share([]) == []
+    assert report.sunshine_share_verdict(weeks[:1]) is None
+
+
+def test_stats_markdown_shows_sunshine_share():
+    d0 = date(2026, 10, 1)
+    sun = [report.day_length_hours(d0 + timedelta(days=i)) * (0.5 if i < 7 else 0.25) for i in range(14)]
+    md = report.stats_markdown(_sunny_days("2026-10-01", sun), [])
+    assert (
+        "- Sunshine as share of daylight by week: 50% → 25%; latest week (2026-10-08 → 2026-10-14)"
+        " **25%** of possible sun vs. 50% in the first, cloudier" in md
+    )

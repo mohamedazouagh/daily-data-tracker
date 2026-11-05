@@ -58,6 +58,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Widest day/night range by weekday: **Tuesday** (7.9 °C average max − min over 6 days)
 - Day/night range by week: 9.5 → 10.4 → 7.2 → 6.2 → 4.9 → 5.1 °C; latest week (2026-10-29 → 2026-11-04) **5.1 °C** vs. 9.5 °C in the first, narrowing
 - Sunshine by week: 8.6 → 9.6 → 8.4 → 6.5 → 6.3 → 5.5 h/day; latest week (2026-10-29 → 2026-11-04) **5.5 h/day** vs. 8.6 h in the first, darker
+- Sunshine as share of daylight by week: 73% → 85% → 78% → 62% → 63% → 57%; latest week (2026-10-29 → 2026-11-04) **57%** of possible sun vs. 73% in the first, cloudier
 - Nights by week (avg min): 13.4 → 10.3 → 9.2 → 8.5 → 8.8 → 6.0 °C; latest week (2026-10-29 → 2026-11-04) **6.0 °C** vs. 13.4 °C in the first, colder
 - Dry days by weekday: Mon 2/6 · Tue 1/6 · Wed 3/6 · Thu 1/5 · Fri 3/6 · Sat 3/6 · Sun 2/6
 - Weekend vs. weekday rain: **3.7 mm/day** over 12 weekend days vs. 2.4 mm/day over 29 weekdays
@@ -165,7 +166,8 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Day/night range by weekday: which day of the week has the widest average max − min spread
 - [x] Day/night range trend: is the weekly average max − min spread shrinking as autumn goes on
 - [x] Sunshine by week: weekly average sun hours to see how fast the days are getting darker
-- [ ] Sunshine by week vs. day length: share of the astronomically possible sun hours each week
+- [x] Sunshine by week vs. day length: share of the astronomically possible sun hours each week
+- [ ] Cloudiest weekday by sunshine share (removes the day-length effect from the weekday sun ranking)
 - [x] Nights by week: weekly average min temperature to see how fast the nights are cooling
 - [x] Week of the first frost-risk night (min below 3 °C) once nights keep dropping
 - [ ] Frost-risk nights per week (min below 3 °C) to see how fast they become common
