@@ -547,6 +547,27 @@ def first_frost(rows: list[dict]) -> tuple[str, float] | None:
     return None
 
 
+FROST_RISK_C = 3.0
+
+
+def first_frost_risk(rows: list[dict], threshold: float = FROST_RISK_C) -> tuple[str, float, int, int] | None:
+    """Earliest night with a minimum strictly below ``threshold`` °C (ground-frost risk).
+
+    Returns (date, temp_min_c, ISO week number, number of such nights so far),
+    or None when no stored night has dropped that low. Rows without a min
+    temperature are skipped; a night exactly at the threshold does not count.
+    """
+    hits = [
+        (r["date"], t)
+        for r in sorted(rows, key=lambda r: r["date"])
+        if (t := _value(r, "temp_min_c")) is not None and t < threshold
+    ]
+    if not hits:
+        return None
+    day, temp = hits[0]
+    return day, temp, date.fromisoformat(day).isocalendar().week, len(hits)
+
+
 def largest_daily_range(rows: list[dict]) -> tuple[str, float] | None:
     """Day with the biggest gap between max and min temperature, as (date, range °C).
 
@@ -1107,6 +1128,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         frost = first_frost(weather)
         lines.append(
             f"- First frost: **{frost[1]:.1f} °C** on {frost[0]}" if frost else "- First frost (min below 0 °C): none yet"
+        )
+        risk = first_frost_risk(weather)
+        lines.append(
+            f"- First frost-risk night (min below {FROST_RISK_C:.0f} °C): **{risk[1]:.1f} °C** on {risk[0]}"
+            f" (week {risk[2]}), {risk[3]} such night{'s' if risk[3] != 1 else ''} so far"
+            if risk
+            else f"- First frost-risk night (min below {FROST_RISK_C:.0f} °C): none yet"
         )
         mild = warmest_night(weather)
         if mild:

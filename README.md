@@ -31,6 +31,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Total rain: **114.2 mm** · Dry days: **15**
 - Coldest night: **4.8 °C** on 2026-10-12
 - First frost (min below 0 °C): none yet
+- First frost-risk night (min below 3 °C): none yet
 - Warmest night: **17.8 °C** on 2026-09-30
 - Largest day/night range: **13.4 °C** on 2026-09-25
 - Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **7.4 h/day**
@@ -166,4 +167,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Sunshine by week: weekly average sun hours to see how fast the days are getting darker
 - [ ] Sunshine by week vs. day length: share of the astronomically possible sun hours each week
 - [x] Nights by week: weekly average min temperature to see how fast the nights are cooling
-- [ ] Week of the first frost-risk night (min below 3 °C) once nights keep dropping
+- [x] Week of the first frost-risk night (min below 3 °C) once nights keep dropping
+- [ ] Frost-risk nights per week (min below 3 °C) to see how fast they become common

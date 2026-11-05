@@ -1383,3 +1383,17 @@ def test_stats_markdown_shows_weekly_night_trend():
         "- Nights by week (avg min): 8.0 → 5.0 °C; latest week (2026-10-08 → 2026-10-14) **5.0 °C** vs. 8.0 °C in the first, colder"
         in md
     )
+
+
+def test_first_frost_risk_is_strict_skips_missing_and_counts():
+    rows = _weekly_nights("2026-11-02", [5.0, 3.0, None, 2.4, 6.0, 1.1])
+    assert report.first_frost_risk(rows) == ("2026-11-05", 2.4, 45, 2)
+    assert report.first_frost_risk(_weekly_nights("2026-11-02", [3.0, 4.0])) is None
+    assert report.first_frost_risk([]) is None
+
+
+def test_stats_markdown_shows_frost_risk_night():
+    md = report.stats_markdown(_weekly_nights("2026-11-02", [5.0, 2.5, 6.0]), [])
+    assert "- First frost-risk night (min below 3 °C): **2.5 °C** on 2026-11-03 (week 45), 1 such night so far" in md
+    md = report.stats_markdown(_weekly_nights("2026-11-02", [5.0, 4.0]), [])
+    assert "- First frost-risk night (min below 3 °C): none yet" in md
