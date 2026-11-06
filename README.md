@@ -23,18 +23,18 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 ## Stats
 
 <!-- stats:start -->
-**Days tracked:** 41 weather · 29 FX
+**Days tracked:** 42 weather · 30 FX
 
-- Average max temperature: **16.5 °C**
+- Average max temperature: **16.3 °C**
 - Warmest day: **26.2 °C** · Coldest max: **8.9 °C**
-- Last 7 days vs. the 7 before (avg max): **11.2 °C** vs. 13.7 °C (-2.6 °C)
-- Total rain: **114.2 mm** · Dry days: **15**
-- Coldest night: **4.8 °C** on 2026-10-12
+- Last 7 days vs. the 7 before (avg max): **10.4 °C** vs. 13.9 °C (-3.5 °C)
+- Total rain: **114.2 mm** · Dry days: **16**
+- Coldest night: **3.4 °C** on 2026-11-05
 - First frost (min below 0 °C): none yet
 - First frost-risk night (min below 3 °C): none yet
 - Warmest night: **17.8 °C** on 2026-09-30
 - Largest day/night range: **13.4 °C** on 2026-09-25
-- Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **7.4 h/day**
+- Sunniest day: **11.1 h** on 2026-09-25 · Average sunshine: **7.5 h/day**
 - Wettest day: **28.7 mm** on 2026-10-23
 - Wettest day's share of all rain: **25%** (28.7 mm on 2026-10-23)
 - Share of rain from the 3 wettest days: **53%** (2026-10-23 28.7 mm, 2026-10-24 20.4 mm, 2026-10-25 11.0 mm)
@@ -49,41 +49,41 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Sunshine during wet spells (avg h/day): 2026-09-28 → 2026-10-01 7.5 h · 2026-10-07 → 2026-10-11 8.1 h · 2026-10-16 → 2026-10-27 5.9 h · 2026-11-01 → 2026-11-03 2.3 h
 - Dry vs. wet spell sunshine: **+3.9 h/day** (10.1 h over 8 dry-spell days vs. 6.1 h over 24 wet-spell days)
 - Dry vs. wet spell temperature: days **+5.3 °C** (20.8 vs. 15.5 °C max), nights **+0.1 °C** (9.8 vs. 9.7 °C min) over 8 dry-spell and 24 wet-spell days
-- Current run: **1 dry day in a row**
+- Current run: **2 dry days in a row** since 2026-11-04
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Friday** (6.8 mm on average over 6 days)
-- Sunniest weekday so far: **Thursday** (9.2 h on average over 5 days)
-- Mildest nights by weekday: **Thursday** (10.2 °C average min over 5 days)
+- Sunniest weekday so far: **Thursday** (9.2 h on average over 6 days)
+- Mildest nights by weekday: **Tuesday** (10.1 °C average min over 6 days)
 - Coldest days by weekday: **Saturday** (14.9 °C average max over 6 days)
 - Widest day/night range by weekday: **Tuesday** (7.9 °C average max − min over 6 days)
-- Day/night range by week: 9.5 → 10.4 → 7.2 → 6.2 → 4.9 → 5.1 °C; latest week (2026-10-29 → 2026-11-04) **5.1 °C** vs. 9.5 °C in the first, narrowing
-- Sunshine by week: 8.6 → 9.6 → 8.4 → 6.5 → 6.3 → 5.5 h/day; latest week (2026-10-29 → 2026-11-04) **5.5 h/day** vs. 8.6 h in the first, darker
-- Sunshine as share of daylight by week: 73% → 85% → 78% → 62% → 63% → 57%; latest week (2026-10-29 → 2026-11-04) **57%** of possible sun vs. 73% in the first, cloudier
-- Nights by week (avg min): 13.4 → 10.3 → 9.2 → 8.5 → 8.8 → 6.0 °C; latest week (2026-10-29 → 2026-11-04) **6.0 °C** vs. 13.4 °C in the first, colder
-- Dry days by weekday: Mon 2/6 · Tue 1/6 · Wed 3/6 · Thu 1/5 · Fri 3/6 · Sat 3/6 · Sun 2/6
-- Weekend vs. weekday rain: **3.7 mm/day** over 12 weekend days vs. 2.4 mm/day over 29 weekdays
-- Weekend vs. weekday sunshine: **8.3 h/day** over 12 weekend days vs. 7.1 h/day over 29 weekdays
-- Weekend vs. weekday max temperature: **15.1 °C** over 12 weekend days vs. 17.0 °C over 29 weekdays (-1.9 °C)
-- Weekend vs. weekday night (min) temperature: **8.4 °C** over 12 weekend days vs. 9.6 °C over 29 weekdays (-1.2 °C)
-- Rain vs. sunshine correlation: **r = -0.19**
+- Day/night range by week: 9.1 → 10.1 → 8.0 → 5.6 → 5.2 → 5.0 °C; latest week (2026-10-30 → 2026-11-05) **5.0 °C** vs. 9.1 °C in the first, narrowing
+- Sunshine by week: 8.6 → 10.0 → 8.3 → 6.2 → 6.4 → 5.5 h/day; latest week (2026-10-30 → 2026-11-05) **5.5 h/day** vs. 8.6 h in the first, darker
+- Sunshine as share of daylight by week: 73% → 89% → 77% → 60% → 65% → 58%; latest week (2026-10-30 → 2026-11-05) **58%** of possible sun vs. 73% in the first, cloudier
+- Nights by week (avg min): 13.5 → 9.8 → 9.1 → 8.2 → 8.8 → 5.4 °C; latest week (2026-10-30 → 2026-11-05) **5.4 °C** vs. 13.5 °C in the first, colder
+- Dry days by weekday: Mon 2/6 · Tue 1/6 · Wed 3/6 · Thu 2/6 · Fri 3/6 · Sat 3/6 · Sun 2/6
+- Weekend vs. weekday rain: **3.7 mm/day** over 12 weekend days vs. 2.3 mm/day over 30 weekdays
+- Weekend vs. weekday sunshine: **8.3 h/day** over 12 weekend days vs. 7.1 h/day over 30 weekdays
+- Weekend vs. weekday max temperature: **15.1 °C** over 12 weekend days vs. 16.8 °C over 30 weekdays (-1.7 °C)
+- Weekend vs. weekday night (min) temperature: **8.4 °C** over 12 weekend days vs. 9.4 °C over 30 weekdays (-1.0 °C)
+- Rain vs. sunshine correlation: **r = -0.20**
 
 Last 7 days (Breda):
 
 | Date | Max °C | Min °C | Rain mm | Sun h |
 |---|---|---|---|---|
+| 2026-11-05 | 9.9 | 3.4 | 0.0 | 9.0 |
 | 2026-11-04 | 10.2 | 4.9 | 0.0 | 8.0 |
 | 2026-11-03 | 10.1 | 5.2 | 0.2 | 4.35 |
 | 2026-11-02 | 11.0 | 8.2 | 1.6 | 1.0 |
 | 2026-11-01 | 10.4 | 4.8 | 0.3 | 1.47 |
 | 2026-10-31 | 8.9 | 5.5 | 0.0 | 5.49 |
 | 2026-10-30 | 12.6 | 6.1 | 0.0 | 8.85 |
-| 2026-10-29 | 15.0 | 7.5 | 0.1 | 9.0 |
 
-Latest EUR rates (2026-11-04): USD 1.1267 · GBP 0.8346 · CHF 0.9188 · TRY 56.3598
+Latest EUR rates (2026-11-05): USD 1.1224 · GBP 0.83393 · CHF 0.918 · TRY 56.1729
 
-Change vs. 2026-11-03: USD +0.79% · GBP +0.12% · CHF +0.24% · TRY +0.84%
+Change vs. 2026-11-04: USD -0.38% · GBP -0.08% · CHF -0.09% · TRY -0.33%
 
-Change since tracking started (2026-09-25): USD -1.19% · GBP -3.00% · CHF -2.72% · TRY +1.01%
+Change since tracking started (2026-09-25): USD -1.57% · GBP -3.08% · CHF -2.81% · TRY +0.67%
 
 Biggest single-day move since tracking started: CHF -1.67% on 2026-10-02
 
@@ -94,20 +94,20 @@ Best and worst 5-business-day move:
 - CHF: best **+0.37%** (2026-10-02 → 2026-10-09) · worst **-1.78%** (2026-09-30 → 2026-10-07)
 - TRY: best **+1.58%** (2026-10-28 → 2026-11-04) · worst **-1.22%** (2026-09-30 → 2026-10-07)
 
-Realised volatility (std. dev. of daily moves, 28 moves): USD 0.35% · GBP 0.20% · CHF 0.41% · TRY 0.36%
+Realised volatility (std. dev. of daily moves, 29 moves): USD 0.35% · GBP 0.19% · CHF 0.40% · TRY 0.36%
 
-10-move volatility, first window → latest: USD 0.41% → 0.37% (calmer) · GBP 0.21% → 0.19% (steady) · CHF 0.63% → 0.25% (calmer) · TRY 0.39% → 0.39% (steady)
+10-move volatility, first window → latest: USD 0.41% → 0.38% (steady) · GBP 0.21% → 0.19% (steady) · CHF 0.63% → 0.20% (calmer) · TRY 0.39% → 0.40% (steady)
 
-Calmest → choppiest over the latest 10 moves: GBP 0.19% < CHF 0.25% < USD 0.37% < TRY 0.39% (calmest: **GBP**)
+Calmest → choppiest over the latest 10 moves: GBP 0.19% < CHF 0.20% < USD 0.38% < TRY 0.40% (calmest: **GBP**)
 
 Longest calm USD stretch (no daily move above 0.5%): **20 business days** (2026-10-07 → 2026-11-03)
 
 Weekend gaps vs. weekdays (avg absolute move):
 
-- USD: **0.22%** over 6 gaps vs. 0.29% over 22 weekday moves (gaps smaller)
-- GBP: **0.26%** over 6 gaps vs. 0.18% over 22 weekday moves (gaps larger)
-- CHF: **0.14%** over 6 gaps vs. 0.31% over 22 weekday moves (gaps smaller)
-- TRY: **0.17%** over 6 gaps vs. 0.29% over 22 weekday moves (gaps smaller)
+- USD: **0.22%** over 6 gaps vs. 0.29% over 23 weekday moves (gaps smaller)
+- GBP: **0.26%** over 6 gaps vs. 0.17% over 23 weekday moves (gaps larger)
+- CHF: **0.14%** over 6 gaps vs. 0.30% over 23 weekday moves (gaps smaller)
+- TRY: **0.17%** over 6 gaps vs. 0.29% over 23 weekday moves (gaps smaller)
 
 <!-- stats:end -->
 
