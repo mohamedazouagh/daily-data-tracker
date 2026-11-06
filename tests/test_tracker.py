@@ -1425,3 +1425,30 @@ def test_stats_markdown_shows_sunshine_share():
         "- Sunshine as share of daylight by week: 50% → 25%; latest week (2026-10-08 → 2026-10-14)"
         " **25%** of possible sun vs. 50% in the first, cloudier" in md
     )
+
+
+def test_weekly_frost_risk_nights_counts_strictly_below_threshold_per_block():
+    # 9 days: first block (2 days) is too short and dropped; last 7 form one block.
+    rows = _weekly_nights("2026-10-01", [1.0, 1.0, 5.0, 2.9, 3.0, -1.0, 4.0, 2.0, 6.0])
+    assert report.weekly_frost_risk_nights(rows) == [("2026-10-03", "2026-10-09", 3, 7)]
+
+
+def test_weekly_frost_risk_nights_skips_missing_and_uses_counted_nights():
+    rows = _weekly_nights("2026-10-01", [8.0] * 7 + [2.0, None, None, 1.0, 5.0, 4.0, 0.5])
+    assert report.weekly_frost_risk_nights(rows) == [
+        ("2026-10-01", "2026-10-07", 0, 7),
+        ("2026-10-08", "2026-10-14", 3, 5),
+    ]
+
+
+def test_weekly_frost_risk_nights_custom_threshold_and_empty():
+    rows = _weekly_nights("2026-10-01", [0.0, -0.5, 1.0, 0.0])
+    assert report.weekly_frost_risk_nights(rows, threshold=0.0) == [("2026-09-28", "2026-10-04", 1, 4)]
+    assert report.weekly_frost_risk_nights([]) == []
+
+
+def test_stats_markdown_lists_frost_risk_nights_by_week():
+    rows = _weekly_nights("2026-10-01", [8.0] * 7 + [2.0, 6.0, 1.5, 7.0, 5.0, 4.0, 3.5])
+    md = report.stats_markdown(rows, [])
+    assert "Frost-risk nights by week (min below 3 °C): 0 → 2;" in md
+    assert "**2 of 7 nights**" in md

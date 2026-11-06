@@ -60,6 +60,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Sunshine by week: 8.6 → 10.0 → 8.3 → 6.2 → 6.4 → 5.5 h/day; latest week (2026-10-30 → 2026-11-05) **5.5 h/day** vs. 8.6 h in the first, darker
 - Sunshine as share of daylight by week: 73% → 89% → 77% → 60% → 65% → 58%; latest week (2026-10-30 → 2026-11-05) **58%** of possible sun vs. 73% in the first, cloudier
 - Nights by week (avg min): 13.5 → 9.8 → 9.1 → 8.2 → 8.8 → 5.4 °C; latest week (2026-10-30 → 2026-11-05) **5.4 °C** vs. 13.5 °C in the first, colder
+- Frost-risk nights by week (min below 3 °C): 0 → 0 → 0 → 0 → 0 → 0; latest week (2026-10-30 → 2026-11-05) **0 of 7 nights**
 - Dry days by weekday: Mon 2/6 · Tue 1/6 · Wed 3/6 · Thu 2/6 · Fri 3/6 · Sat 3/6 · Sun 2/6
 - Weekend vs. weekday rain: **3.7 mm/day** over 12 weekend days vs. 2.3 mm/day over 30 weekdays
 - Weekend vs. weekday sunshine: **8.3 h/day** over 12 weekend days vs. 7.1 h/day over 30 weekdays
@@ -170,4 +171,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [ ] Cloudiest weekday by sunshine share (removes the day-length effect from the weekday sun ranking)
 - [x] Nights by week: weekly average min temperature to see how fast the nights are cooling
 - [x] Week of the first frost-risk night (min below 3 °C) once nights keep dropping
-- [ ] Frost-risk nights per week (min below 3 °C) to see how fast they become common
+- [x] Frost-risk nights per week (min below 3 °C) to see how fast they become common
+- [ ] Frost nights per week (min below 0 °C) next to the frost-risk count once frosts start

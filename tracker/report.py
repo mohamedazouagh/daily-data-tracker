@@ -952,6 +952,29 @@ def weekly_night_trend(rows: list[dict], window: int = 7, min_days: int = 4) -> 
     return _weekly_blocks(nights, window, min_days)
 
 
+def weekly_frost_risk_nights(
+    rows: list[dict], threshold: float = FROST_RISK_C, window: int = 7, min_days: int = 4
+) -> list[tuple[str, str, int, int]]:
+    """Nights with a minimum strictly below ``threshold`` °C per block of ``window`` days, oldest first.
+
+    Same blocks as :func:`weekly_night_trend` (counted back from the latest day
+    with a min temperature, missing values skipped, a block needs at least
+    ``min_days`` values). Each entry is (first date, last date, frost-risk
+    nights, nights counted), so a gap in the data never reads as a mild night.
+    """
+    flags: dict[date, float] = {}
+    for r in rows:
+        v = _value(r, "temp_min_c")
+        if v is not None:
+            flags[date.fromisoformat(r["date"])] = 1.0 if v < threshold else 0.0
+    out: list[tuple[str, str, int, int]] = []
+    for start, end, share in _weekly_blocks(flags, window, min_days):
+        lo, hi = date.fromisoformat(start), date.fromisoformat(end)
+        days = sum(1 for d in flags if lo <= d <= hi)
+        out.append((start, end, round(share * days), days))
+    return out
+
+
 def day_length_hours(day: date, latitude: float = BREDA["latitude"]) -> float:
     """Astronomical daylight (sunrise to sunset) in hours for ``day`` at ``latitude``.
 
@@ -1331,6 +1354,13 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(
                 f"- Nights by week (avg min): {' → '.join(f'{w[2]:.1f}' for w in nweeks)} °C;"
                 f" latest week ({nweeks[-1][0]} → {nweeks[-1][1]}) **{nweeks[-1][2]:.1f} °C** vs. {nweeks[0][2]:.1f} °C in the first, {nverdict}"
+            )
+        fweeks = weekly_frost_risk_nights(weather)
+        if fweeks:
+            latest = fweeks[-1]
+            lines.append(
+                f"- Frost-risk nights by week (min below {FROST_RISK_C:.0f} °C): {' → '.join(str(w[2]) for w in fweeks)};"
+                f" latest week ({latest[0]} → {latest[1]}) **{latest[2]} of {latest[3]} nights**"
             )
         dry = dry_share_by_weekday(weather)
         if dry:
