@@ -519,6 +519,35 @@ def test_stats_markdown_includes_sunniest_weekday_line():
     assert "- Sunniest weekday so far: **Tuesday** (9.5 h on average over 1 day)" in md
 
 
+def test_cloudiest_weekday_by_share_uses_day_length():
+    # 2026-09-28 is a Monday. Same 3 h of sun on Monday 28 Sep and Monday 5 Oct,
+    # Tuesday gets 1 h; the shortest-day Monday must not beat the 1 h Tuesday.
+    rows = _sun_days("2026-09-28", [3.0, 1.0, 6.0, 6.0, 6.0, 6.0, 6.0, 3.0])
+    day, share, n = report.cloudiest_weekday_by_share(rows)
+    assert (day, n) == ("Tuesday", 1)
+    assert share == 1.0 / report.day_length_hours(date(2026, 9, 29))
+
+
+def test_cloudiest_weekday_by_share_ties_skips_missing_and_caps():
+    rows = _sun_days("2026-09-28", ["", 0.0, 0.0, 30.0])
+    assert report.cloudiest_weekday_by_share(rows) == ("Tuesday", 0.0, 1)
+    assert report.cloudiest_weekday_by_share(_sun_days("2026-10-01", [30.0])) == ("Thursday", 1.0, 1)
+
+
+def test_cloudiest_weekday_by_share_none_without_sun_values():
+    assert report.cloudiest_weekday_by_share([]) is None
+    assert report.cloudiest_weekday_by_share(_sun_days("2026-09-28", ["", ""])) is None
+
+
+def test_stats_markdown_includes_cloudiest_weekday_line():
+    rows = [
+        dict(r, temp_max_c=15.0, temp_min_c=8.0, precip_mm=0.0)
+        for r in _sun_days("2026-09-28", [2.0, 9.5, 4.0])
+    ]
+    md = report.stats_markdown(rows, [])
+    assert "- Cloudiest weekday by sunshine share: **Monday** (17% of possible sun on average over 1 day)" in md
+
+
 def _usd_on(pairs):
     return [{"date": d, "usd": v} for d, v in pairs]
 

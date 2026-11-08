@@ -1011,6 +1011,32 @@ def weekly_sunshine_share(
     return _weekly_blocks(shares, window, min_days)
 
 
+def cloudiest_weekday_by_share(
+    rows: list[dict], latitude: float = BREDA["latitude"]
+) -> tuple[str, float, int] | None:
+    """Day of the week with the lowest average sunshine share, as (weekday, mean share, days counted).
+
+    Each day's sunshine is divided by its astronomical day length (see
+    :func:`day_length_hours`, capped at 100%), so weekdays that happened to
+    fall later in autumn are not penalised just for shorter days. Days without
+    a sunshine value are skipped. Ties go to the earlier weekday (Monday first).
+    Returns None when no day has a sunshine value.
+    """
+    by_weekday: dict[int, list[float]] = {}
+    for r in rows:
+        v = _value(r, "sunshine_h")
+        if v is None:
+            continue
+        d = date.fromisoformat(r["date"])
+        possible = day_length_hours(d, latitude)
+        if possible > 0:
+            by_weekday.setdefault(d.weekday(), []).append(min(v / possible, 1.0))
+    if not by_weekday:
+        return None
+    worst = min(sorted(by_weekday), key=lambda d: mean(by_weekday[d]))
+    return WEEKDAYS[worst], mean(by_weekday[worst]), len(by_weekday[worst])
+
+
 def sunshine_share_verdict(weeks: list[tuple[str, str, float]]) -> str | None:
     """"cloudier" / "clearer" / "flat" comparing the latest week's sunshine share with the first one."""
     if len(weeks) < 2:
@@ -1311,6 +1337,11 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
         sd = sunniest_weekday(weather)
         if sd:
             lines.append(f"- Sunniest weekday so far: **{sd[0]}** ({sd[1]:.1f} h on average over {sd[2]} day{'s' if sd[2] != 1 else ''})")
+        cw = cloudiest_weekday_by_share(weather)
+        if cw:
+            lines.append(
+                f"- Cloudiest weekday by sunshine share: **{cw[0]}** ({cw[1]:.0%} of possible sun on average over {cw[2]} day{'s' if cw[2] != 1 else ''})"
+            )
         mn = mildest_night_weekday(weather)
         if mn:
             lines.append(

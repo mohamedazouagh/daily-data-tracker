@@ -53,6 +53,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Longest warm streak (max > 20 °C): **7 days** (2026-09-25 → 2026-10-01)
 - Wettest weekday so far: **Friday** (5.8 mm on average over 7 days)
 - Sunniest weekday so far: **Thursday** (9.2 h on average over 6 days)
+- Cloudiest weekday by sunshine share: **Monday** (52% of possible sun on average over 6 days)
 - Mildest nights by weekday: **Tuesday** (10.1 °C average min over 6 days)
 - Coldest days by weekday: **Saturday** (14.0 °C average max over 7 days)
 - Widest day/night range by weekday: **Tuesday** (7.9 °C average max − min over 6 days)
@@ -168,7 +169,8 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Day/night range trend: is the weekly average max − min spread shrinking as autumn goes on
 - [x] Sunshine by week: weekly average sun hours to see how fast the days are getting darker
 - [x] Sunshine by week vs. day length: share of the astronomically possible sun hours each week
-- [ ] Cloudiest weekday by sunshine share (removes the day-length effect from the weekday sun ranking)
+- [x] Cloudiest weekday by sunshine share (removes the day-length effect from the weekday sun ranking)
+- [ ] Cloudiest weekday history: does the same weekday stay cloudiest as more weeks come in
 - [x] Nights by week: weekly average min temperature to see how fast the nights are cooling
 - [x] Week of the first frost-risk night (min below 3 °C) once nights keep dropping
 - [x] Frost-risk nights per week (min below 3 °C) to see how fast they become common
