@@ -975,6 +975,23 @@ def weekly_frost_risk_nights(
     return out
 
 
+def weekly_frost_nights(
+    rows: list[dict], window: int = 7, min_days: int = 4
+) -> list[tuple[str, str, int, int, int]]:
+    """Frost nights (min strictly below 0 °C) next to frost-risk nights per block, oldest first.
+
+    Uses the same blocks as :func:`weekly_frost_risk_nights`, so both counts
+    cover exactly the same nights. Each entry is (first date, last date, frost
+    nights, frost-risk nights, nights counted). Returns an empty list until at
+    least one frost night is stored, so the line only appears once frosts start.
+    """
+    frost = weekly_frost_risk_nights(rows, threshold=0.0, window=window, min_days=min_days)
+    if not any(w[2] for w in frost):
+        return []
+    risk = weekly_frost_risk_nights(rows, window=window, min_days=min_days)
+    return [(f[0], f[1], f[2], r[2], f[3]) for f, r in zip(frost, risk)]
+
+
 def day_length_hours(day: date, latitude: float = BREDA["latitude"]) -> float:
     """Astronomical daylight (sunrise to sunset) in hours for ``day`` at ``latitude``.
 
@@ -1392,6 +1409,14 @@ def stats_markdown(weather: list[dict], fx: list[dict]) -> str:
             lines.append(
                 f"- Frost-risk nights by week (min below {FROST_RISK_C:.0f} °C): {' → '.join(str(w[2]) for w in fweeks)};"
                 f" latest week ({latest[0]} → {latest[1]}) **{latest[2]} of {latest[3]} nights**"
+            )
+        frost_weeks = weekly_frost_nights(weather)
+        if frost_weeks:
+            latest = frost_weeks[-1]
+            lines.append(
+                f"- Frost nights by week (min below 0 °C): {' → '.join(str(w[2]) for w in frost_weeks)};"
+                f" latest week ({latest[0]} → {latest[1]}) **{latest[2]} of {latest[4]} nights**"
+                f" vs. {latest[3]} frost-risk"
             )
         dry = dry_share_by_weekday(weather)
         if dry:

@@ -1481,3 +1481,27 @@ def test_stats_markdown_lists_frost_risk_nights_by_week():
     md = report.stats_markdown(rows, [])
     assert "Frost-risk nights by week (min below 3 °C): 0 → 2;" in md
     assert "**2 of 7 nights**" in md
+
+
+def test_weekly_frost_nights_pairs_frost_with_frost_risk_per_block():
+    # 0.0 is not frost, 2.9 is frost risk only, -0.1 and -2.0 are both.
+    rows = _weekly_nights("2026-10-01", [8.0] * 7 + [0.0, -0.1, 2.9, 5.0, -2.0, None, 4.0])
+    assert report.weekly_frost_nights(rows) == [
+        ("2026-10-01", "2026-10-07", 0, 0, 7),
+        ("2026-10-08", "2026-10-14", 2, 4, 6),
+    ]
+
+
+def test_weekly_frost_nights_empty_until_first_frost():
+    rows = _weekly_nights("2026-10-01", [2.0, 1.0, 0.0, 0.5, 2.5, 1.5, 0.2])
+    assert report.weekly_frost_nights(rows) == []
+    assert report.weekly_frost_nights([]) == []
+    md = report.stats_markdown(rows, [])
+    assert "Frost nights by week" not in md
+
+
+def test_stats_markdown_lists_frost_nights_by_week():
+    rows = _weekly_nights("2026-10-01", [8.0] * 7 + [2.0, -1.0, 1.5, 7.0, 5.0, 4.0, 3.5])
+    md = report.stats_markdown(rows, [])
+    assert "- Frost nights by week (min below 0 °C): 0 → 1;" in md
+    assert "**1 of 7 nights** vs. 3 frost-risk" in md

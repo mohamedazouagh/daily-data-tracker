@@ -62,6 +62,7 @@ Solid green: daily max · dashed blue: trailing 7-day average (appears once 7 da
 - Sunshine as share of daylight by week: 73% → 85% → 78% → 62% → 63% → 57% → 69%; latest week (2026-11-05 → 2026-11-11) **69%** of possible sun vs. 73% in the first, cloudier
 - Nights by week (avg min): 13.4 → 10.3 → 9.2 → 8.5 → 8.8 → 6.0 → 2.3 °C; latest week (2026-11-05 → 2026-11-11) **2.3 °C** vs. 13.4 °C in the first, colder
 - Frost-risk nights by week (min below 3 °C): 0 → 0 → 0 → 0 → 0 → 0 → 4; latest week (2026-11-05 → 2026-11-11) **4 of 7 nights**
+- Frost nights by week (min below 0 °C): 0 → 0 → 0 → 0 → 0 → 0 → 1; latest week (2026-11-05 → 2026-11-11) **1 of 7 nights** vs. 4 frost-risk
 - Dry days by weekday: Mon 3/7 · Tue 1/7 · Wed 3/7 · Thu 2/6 · Fri 4/7 · Sat 3/7 · Sun 2/7
 - Weekend vs. weekday rain: **3.7 mm/day** over 14 weekend days vs. 2.3 mm/day over 34 weekdays
 - Weekend vs. weekday sunshine: **7.8 h/day** over 14 weekend days vs. 7.1 h/day over 34 weekdays
@@ -174,4 +175,5 @@ Weekend gaps vs. weekdays (avg absolute move):
 - [x] Nights by week: weekly average min temperature to see how fast the nights are cooling
 - [x] Week of the first frost-risk night (min below 3 °C) once nights keep dropping
 - [x] Frost-risk nights per week (min below 3 °C) to see how fast they become common
-- [ ] Frost nights per week (min below 0 °C) next to the frost-risk count once frosts start
+- [x] Frost nights per week (min below 0 °C) next to the frost-risk count once frosts start
+- [ ] Frost share of frost-risk nights: how often a night below 3 °C actually drops below 0 °C, per week
